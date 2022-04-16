@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import { DataFrame } from "danfojs";
+import { format, parseISO } from "date-fns";
 
 const numberOfPage = 5; // default
 const articlesPerPage = 1000; //
@@ -34,6 +35,12 @@ const prepareData = async (articleList: any[]) => {
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
       let article = articleList[pageIndex][articleIndex];
+
+      // Parse ISO date to local browser timezone
+      let publishedAtDate = parseISO(article["published_at"]);
+      let publishedAtHour = format(publishedAtDate, "HH");
+      let publishedAtDayOfWeek = format(publishedAtDate, "ccc");
+
       let tagList = article["tag_list"];
       let metrics = {
         tagOne: tagList ? tagList[0] : undefined,
@@ -43,7 +50,8 @@ const prepareData = async (articleList: any[]) => {
         commentsCount: article["comments_count"],
         positiveReactionCount: article["positive_reactions_count"],
         publicReactionCount: article["public_reactions_count"],
-        publishedAt: article["published_at"],
+        publishedAtHour,
+        publishedAtDayOfWeek,
         readingTimeMinutes: article["reading_time_minutes"],
       };
       data.push(metrics);
