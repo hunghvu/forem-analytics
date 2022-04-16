@@ -5,10 +5,10 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
-import danfo from "danfojs";
+import { DataFrame } from "danfojs";
 
 const numberOfPage = 5; // default
-const articlesPerPage = 1000; // default
+const articlesPerPage = 1000; //
 
 const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading: Dispatch<SetStateAction<boolean>>,
@@ -16,6 +16,7 @@ const fetchPublishedArticlesSortedByPublishDate = async (
 ) => {
   const articles = [];
   setLoading(true);
+  
   for (let i = 1; i <= numberOfPage; i++) {
     const response = await fetch(
       `https://dev.to/api/articles/latest?page=${i}&per_page=${articlesPerPage}`
@@ -30,27 +31,29 @@ const fetchPublishedArticlesSortedByPublishDate = async (
 };
 
 const prepareData = async (articleList: any[]) => {
+  let data = [];
+
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
-      // let dataframe = new danfo.DataFrame();
       let article = articleList[pageIndex][articleIndex];
       let tagList = article["tag_list"];
-
-      let usefulValues = {
-        tagOne: tagList[0],
-        tagTwo: tagList[1],
-        tagThree: tagList[2],
-        tagFour: tagList[3],
-        commentCount: article["comments_count"],
+      let metrics = {
+        tagOne: tagList ? tagList[0] : undefined,
+        tagTwo: tagList ? tagList[1] : undefined,
+        tagThree: tagList ? tagList[2] : undefined,
+        tagFour: tagList ? tagList[3] : undefined,
+        commentsCount: article["comments_count"],
         positiveReactionCount: article["positive_reactions_count"],
         publicReactionCount: article["public_reactions_count"],
         publishedAt: article["published_at"],
         readingTimeMinutes: article["reading_time_minutes"],
       };
-      // console.log(usefulValues);
-      // dataframe.append(await danfo.readJSON(articles[pageIndex][articleIndex]), )
+      data.push(metrics);
     }
   }
+
+  let dataframe = new DataFrame(data);
+
 };
 
 const Dashboard = () => {
