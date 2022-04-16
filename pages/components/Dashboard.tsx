@@ -2,7 +2,7 @@
  * @author Hung Vu
  */
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import { DataFrame } from "danfojs";
@@ -16,7 +16,7 @@ const fetchPublishedArticlesSortedByPublishDate = async (
 ) => {
   const articles = [];
   setLoading(true);
-  
+
   for (let i = 1; i <= numberOfPage; i++) {
     const response = await fetch(
       `https://dev.to/api/articles/latest?page=${i}&per_page=${articlesPerPage}`
@@ -25,14 +25,12 @@ const fetchPublishedArticlesSortedByPublishDate = async (
     articles.push(pageContent);
   }
 
-  // FIXME: Set state is async, so possible for race condition?
   setArticleList(articles);
   setLoading(false);
 };
 
 const prepareData = async (articleList: any[]) => {
-  let data = [];
-
+  let data: any[] = [];
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
       let article = articleList[pageIndex][articleIndex];
@@ -53,12 +51,17 @@ const prepareData = async (articleList: any[]) => {
   }
 
   let dataframe = new DataFrame(data);
-
 };
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [articleList, setArticleList] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (articleList.length > 0) {
+      prepareData(articleList);
+    }
+  }, [articleList]);
 
   return (
     <LoadingButton
@@ -69,7 +72,6 @@ const Dashboard = () => {
       variant="outlined"
       onClick={() => {
         fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
-        prepareData(articleList);
       }}
     >
       Fetch
