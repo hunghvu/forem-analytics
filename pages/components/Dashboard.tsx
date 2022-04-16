@@ -4,18 +4,18 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
-import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
+import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
+import danfo from "danfojs";
+
+const numberOfPage = 5; // default
+const articlesPerPage = 1000; // default
 
 const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading: Dispatch<SetStateAction<boolean>>,
-  setArticles: Dispatch<SetStateAction<any[]>>
+  setArticleList: Dispatch<SetStateAction<any[]>>
 ) => {
-  const numberOfPage = 5; // default
-  const articlesPerPage = 1000; // default
   const articles = [];
-
   setLoading(true);
-
   for (let i = 1; i <= numberOfPage; i++) {
     const response = await fetch(
       `https://dev.to/api/articles/latest?page=${i}&per_page=${articlesPerPage}`
@@ -25,24 +25,49 @@ const fetchPublishedArticlesSortedByPublishDate = async (
   }
 
   // FIXME: Set state is async, so possible for race condition?
-  setArticles(articles);
+  setArticleList(articles);
   setLoading(false);
+};
+
+const prepareData = async (articleList: any[]) => {
+  for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
+    for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
+      // let dataframe = new danfo.DataFrame();
+      let article = articleList[pageIndex][articleIndex];
+      let tagList = article["tag_list"];
+
+      let usefulValues = {
+        tagOne: tagList[0],
+        tagTwo: tagList[1],
+        tagThree: tagList[2],
+        tagFour: tagList[3],
+        commentCount: article["comments_count"],
+        positiveReactionCount: article["positive_reactions_count"],
+        publicReactionCount: article["public_reactions_count"],
+        publishedAt: article["published_at"],
+        readingTimeMinutes: article["reading_time_minutes"],
+      };
+      // console.log(usefulValues);
+      // dataframe.append(await danfo.readJSON(articles[pageIndex][articleIndex]), )
+    }
+  }
 };
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
-  const [articles, setArticles] = useState<any[]>([]);
+  const [articleList, setArticleList] = useState<any[]>([]);
 
   return (
     <LoadingButton
       loading={loading}
       disabled={loading}
-      startIcon={<PlayArrowOutlinedIcon/>}
+      startIcon={<PlayArrowOutlinedIcon />}
       loadingPosition="start"
       variant="outlined"
-      onClick={() =>
-        fetchPublishedArticlesSortedByPublishDate(setLoading, setArticles)
-      }
+      onClick={() => {
+        fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
+        prepareData(articleList);
+      }}
     >
       Fetch
     </LoadingButton>
