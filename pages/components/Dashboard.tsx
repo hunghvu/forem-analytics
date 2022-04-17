@@ -30,7 +30,7 @@ const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading(false);
 };
 
-const prepareData = async (articleList: any[]) => {
+const prepareData = (articleList: any[]): DataFrame => {
   let data: any[] = [];
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
@@ -48,8 +48,8 @@ const prepareData = async (articleList: any[]) => {
         tagThree: tagList ? tagList[2] : undefined,
         tagFour: tagList ? tagList[3] : undefined,
         commentsCount: article["comments_count"],
-        positiveReactionCount: article["positive_reactions_count"],
-        publicReactionCount: article["public_reactions_count"],
+        positiveReactionsCount: article["positive_reactions_count"],
+        publicReactionsCount: article["public_reactions_count"], // Unused for now
         publishedAtHour,
         publishedAtDayOfWeek,
         readingTimeMinutes: article["reading_time_minutes"],
@@ -58,7 +58,31 @@ const prepareData = async (articleList: any[]) => {
     }
   }
 
-  let dataframe = new DataFrame(data);
+  return new DataFrame(data);
+};
+
+const analyze = (dataframe: DataFrame) => {
+  // https://danfo.jsdata.org/api-reference/groupby/groupby.agg
+  let reactionsPerArticlesAtGivenPublishedTime = dataframe
+    .groupby(["publishedAtDayOfWeek", "publishedAtHour"])
+    .agg({
+      positiveReactionsCount: "mean",
+    });
+  let commentsPerArticlesAtGivenPublishedTime = dataframe
+    .groupby(["publishedAtDayOfWeek", "publishedAtHour"])
+    .agg({
+      commentsCount: "mean",
+    });
+  let reactionsPerArticlesAtGivenReadingTime = dataframe
+    .groupby(["readingTimeMinutes"])
+    .agg({
+      positiveReactionsCount: "mean",
+    });
+  let commentsPerArticlesAtGivenReadingTime = dataframe
+    .groupby(["readingTimeMinutes"])
+    .agg({
+      commentsCount: "mean",
+    });
 };
 
 const Dashboard = () => {
@@ -67,7 +91,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (articleList.length > 0) {
-      prepareData(articleList);
+      const dataframe = prepareData(articleList);
+      analyze(dataframe);
     }
   }, [articleList]);
 
