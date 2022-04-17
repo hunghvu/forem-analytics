@@ -14,7 +14,7 @@ import { format, parseISO } from "date-fns";
 import { groupBy, sortBy } from "lodash";
 
 // Components
-import CustomizedHeatMap from "./CustomizedHeatMap";
+import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import { Grid } from "@mui/material";
 
 interface RawMetrics {

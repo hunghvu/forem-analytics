@@ -4,7 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Dashboard from "./components/Dashboard";
-import CustomizedHeatMap from "./components/CustomizedHeatMap";
+import CustomizedHeatMap from "./components/visualization/CustomizedHeatMap";
 
 // const HeatMap = dynamic(() => import("./components/HeatMap"), { ssr: false });
 
