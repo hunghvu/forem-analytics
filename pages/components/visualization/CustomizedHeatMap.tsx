@@ -4,7 +4,7 @@
  * Provide customizable heatmap.
  */
 
-// ResponsiveHeatMap is currently broken in @nivo 0.79.0
+// ResponsiveHeatMap is currently broken in @nivo 0.79.0: https://github.com/plouc/nivo/issues/1889
 import { HeatMap } from "@nivo/heatmap";
 import { FC } from "react";
 

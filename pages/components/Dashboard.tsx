@@ -5,7 +5,7 @@
 // React
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-// UI library
+// MUI library
 import LoadingButton from "@mui/lab/LoadingButton";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
@@ -16,6 +16,7 @@ import { groupBy, sortBy } from "lodash";
 // Components
 import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import { Grid } from "@mui/material";
+import CustomizedLineChart from "./visualization/CustomizedLineChart";
 
 interface RawMetrics {
   tagOne: string | undefined;
@@ -60,6 +61,7 @@ const fetchPublishedArticlesSortedByPublishDate = async (
 
   for (let i = 1; i <= numberOfPage; i++) {
     const response = await fetch(
+      // FIXME: Seems like request will fail if there is not enough article?
       `https://dev.to/api/articles/latest?page=${i}&per_page=${articlesPerPage}`
     );
     const pageContent = await response.json();
@@ -327,29 +329,16 @@ const Dashboard = () => {
         ) : null}
       </Grid>
 
-      {/* <Grid item lg={6}>
-        {meanCommentsByReadingTime ? (
-          <CustomizedHeatMap
-            data={meanCommentsByReadingTime}
-            axisTopLegend="Day of Week"
-            axisLeftLegend="Hour"
-            axisRightLegend="Hour"
-            title="Mean comments count by article reading time"
+      <Grid item xs={12}>
+        {statByReadingTime ? (
+          <CustomizedLineChart
+            data={statByReadingTime}
+            axisLeftLegend="Count"
+            axisBottomLegend="Reading time (minutes)"
+            title="Mean comments count and mean reactions count by article reading time"
           />
         ) : null}
       </Grid>
-
-      <Grid item lg={6}>
-        {meanReactionsByReadingTime ? (
-          <CustomizedHeatMap
-            data={meanReactionsByReadingTime}
-            axisTopLegend="Day of Week"
-            axisLeftLegend="Hour"
-            axisRightLegend="Hour"
-            title="Mean comments reactions count by article reading time"
-          />
-        ) : null}
-      </Grid> */}
     </Grid>
   );
 };

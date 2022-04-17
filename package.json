@@ -17,6 +17,7 @@
     "@nivo/core": "^0.79.0",
     "@nivo/heatmap": "^0.79.1",
     "@nivo/legends": "^0.79.1",
+    "@nivo/line": "^0.79.1",
     "date-fns": "^2.28.0",
     "lodash": "^4.17.21",
     "next": "^12.1.5",
