@@ -8,7 +8,7 @@ import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 import { format, parseISO } from "date-fns";
 import { groupBy } from "lodash";
 
-interface Metrics {
+interface RawMetrics {
   tagOne: string | undefined;
   tagTwo: string | undefined;
   tagThree: string | undefined;
@@ -19,6 +19,12 @@ interface Metrics {
   publishedAtHour: string;
   publishedAtDayOfWeek: string;
   readingTimeMinutes: number;
+}
+
+interface AnalysisResult {
+  group: string;
+  meanComments: number;
+  meanReactions: number;
 }
 
 const numberOfPage = 5; // default
@@ -43,8 +49,8 @@ const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading(false);
 };
 
-const prepareData = (articleList: any[]): Metrics[] => {
-  let data: Metrics[] = [];
+const prepareData = (articleList: any[]): RawMetrics[] => {
+  let data: RawMetrics[] = [];
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
       let article = articleList[pageIndex][articleIndex];
@@ -55,7 +61,7 @@ const prepareData = (articleList: any[]): Metrics[] => {
       let publishedAtDayOfWeek = format(publishedAtDate, "ccc");
 
       let tagList = article["tag_list"];
-      let metrics: Metrics = {
+      let metrics: RawMetrics = {
         tagOne: tagList ? tagList[0] : undefined,
         tagTwo: tagList ? tagList[1] : undefined,
         tagThree: tagList ? tagList[2] : undefined,
@@ -74,10 +80,16 @@ const prepareData = (articleList: any[]): Metrics[] => {
   return data;
 };
 
-const analyze = (data: Metrics[]) => {
+const analyze = (
+  data: RawMetrics[],
+  setGroupByPublishedTime: Dispatch<
+    SetStateAction<AnalysisResult[] | undefined>
+  >,
+  setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
+) => {
   const getMeanCommentsAndReactionsByCriteria = (criteria: any) => {
     // Analyze by published time
-    let result = [];
+    let result: AnalysisResult[] = [];
     const grouped = groupBy(data, criteria);
     for (const [group, articleStat] of Object.entries(grouped)) {
       let meanComments = 0;
@@ -92,19 +104,22 @@ const analyze = (data: Metrics[]) => {
       }
       result.push({
         group,
-        meanComments: meanComments.toFixed(2),
-        meanReactions: meanReactions.toFixed(2),
+        meanComments: parseFloat(meanComments.toFixed(2)),
+        meanReactions: parseFloat(meanReactions.toFixed(2)),
       });
     }
     return result;
   };
 
   const groupedByPublishedTime = getMeanCommentsAndReactionsByCriteria(
-    (item: Metrics) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
+    (item: RawMetrics) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
   const groupedByReadingTime = getMeanCommentsAndReactionsByCriteria(
-    (item: Metrics) => item.readingTimeMinutes
+    (item: RawMetrics) => item.readingTimeMinutes
   );
+
+  setGroupByPublishedTime(groupedByPublishedTime);
+  setGroupByReadingTime(groupedByReadingTime);
 
   // console.log(groupedByReadingTime);
 };
@@ -112,11 +127,16 @@ const analyze = (data: Metrics[]) => {
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [articleList, setArticleList] = useState<any[]>([]);
+  const [groupedByPublishedTime, setGroupByPublishedTime] =
+    useState<AnalysisResult[]>();
+
+  const [groupedByReadingTime, setGroupByReadingTime] =
+    useState<AnalysisResult[]>();
 
   useEffect(() => {
     if (articleList.length > 0) {
       const data = prepareData(articleList);
-      analyze(data);
+      analyze(data, setGroupByPublishedTime, setGroupByReadingTime);
     }
   }, [articleList]);
 
