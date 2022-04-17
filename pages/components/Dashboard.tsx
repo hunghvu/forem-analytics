@@ -5,8 +5,21 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
-import { DataFrame } from "danfojs";
 import { format, parseISO } from "date-fns";
+import { groupBy } from "lodash";
+
+interface Metrics {
+  tagOne: string | undefined;
+  tagTwo: string | undefined;
+  tagThree: string | undefined;
+  tagFour: string | undefined;
+  commentsCount: number;
+  positiveReactionsCount: number;
+  publicReactionsCount: number; // Unused for now
+  publishedAtHour: string;
+  publishedAtDayOfWeek: string;
+  readingTimeMinutes: number;
+}
 
 const numberOfPage = 5; // default
 const articlesPerPage = 1000; //
@@ -30,8 +43,8 @@ const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading(false);
 };
 
-const prepareData = (articleList: any[]): DataFrame => {
-  let data: any[] = [];
+const prepareData = (articleList: any[]): Metrics[] => {
+  let data: Metrics[] = [];
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
       let article = articleList[pageIndex][articleIndex];
@@ -42,7 +55,7 @@ const prepareData = (articleList: any[]): DataFrame => {
       let publishedAtDayOfWeek = format(publishedAtDate, "ccc");
 
       let tagList = article["tag_list"];
-      let metrics = {
+      let metrics: Metrics = {
         tagOne: tagList ? tagList[0] : undefined,
         tagTwo: tagList ? tagList[1] : undefined,
         tagThree: tagList ? tagList[2] : undefined,
@@ -58,31 +71,42 @@ const prepareData = (articleList: any[]): DataFrame => {
     }
   }
 
-  return new DataFrame(data);
+  return data;
 };
 
-const analyze = (dataframe: DataFrame) => {
-  // https://danfo.jsdata.org/api-reference/groupby/groupby.agg
-  let reactionsPerArticlesAtGivenPublishedTime = dataframe
-    .groupby(["publishedAtDayOfWeek", "publishedAtHour"])
-    .agg({
-      positiveReactionsCount: "mean",
-    });
-  let commentsPerArticlesAtGivenPublishedTime = dataframe
-    .groupby(["publishedAtDayOfWeek", "publishedAtHour"])
-    .agg({
-      commentsCount: "mean",
-    });
-  let reactionsPerArticlesAtGivenReadingTime = dataframe
-    .groupby(["readingTimeMinutes"])
-    .agg({
-      positiveReactionsCount: "mean",
-    });
-  let commentsPerArticlesAtGivenReadingTime = dataframe
-    .groupby(["readingTimeMinutes"])
-    .agg({
-      commentsCount: "mean",
-    });
+const analyze = (data: Metrics[]) => {
+  const getMeanCommentsAndReactionsByCriteria = (criteria: any) => {
+    // Analyze by published time
+    let result = [];
+    const grouped = groupBy(data, criteria);
+    for (const [group, articleStat] of Object.entries(grouped)) {
+      let meanComments = 0;
+      let meanReactions = 0;
+      for (let i = 0; i < articleStat.length; i++) {
+        meanComments += articleStat[i].commentsCount;
+        meanReactions += articleStat[i].positiveReactionsCount;
+        if (i === articleStat.length - 1) {
+          meanComments /= articleStat.length;
+          meanReactions /= articleStat.length;
+        }
+      }
+      result.push({
+        group,
+        meanComments: meanComments.toFixed(2),
+        meanReactions: meanReactions.toFixed(2),
+      });
+    }
+    return result;
+  };
+
+  const groupedByPublishedTime = getMeanCommentsAndReactionsByCriteria(
+    (item: Metrics) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
+  );
+  const groupedByReadingTime = getMeanCommentsAndReactionsByCriteria(
+    (item: Metrics) => item.readingTimeMinutes
+  );
+
+  // console.log(groupedByReadingTime);
 };
 
 const Dashboard = () => {
@@ -91,8 +115,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (articleList.length > 0) {
-      const dataframe = prepareData(articleList);
-      analyze(dataframe);
+      const data = prepareData(articleList);
+      analyze(data);
     }
   }, [articleList]);
 
