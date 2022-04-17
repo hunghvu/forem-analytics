@@ -44,6 +44,10 @@ interface NivoHeatMapDataPoint {
   }[];
 }
 
+interface NivoLineChartDataPoint extends NivoHeatMapDataPoint {
+  color: string;
+}
+
 const numberOfPage = 5; // default
 const articlesPerPage = 1000; // default
 
@@ -141,7 +145,7 @@ const analyze = (
   setGroupByReadingTime(groupedByReadingTime);
 };
 
-const generateNivoDataFrom = (
+const generateNivoDataFromPublishedTime = (
   groupedData: AnalysisResult[],
   setMeanComments: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>,
   setMeanReactions: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>
@@ -195,6 +199,47 @@ const generateNivoDataFrom = (
   setMeanReactions(sortBy(meanReactionsData, (dataPoint) => dataPoint.id));
 };
 
+const generateNivoDataFromReadingTime = (
+  groupedData: AnalysisResult[],
+  setData: Dispatch<SetStateAction<NivoLineChartDataPoint[] | undefined>>
+) => {
+  let data: NivoLineChartDataPoint[] = [];
+  groupedData.forEach((readingTime, index) => {
+    if (index > 0) {
+      data[0].data.push({
+        x: readingTime.group,
+        y: readingTime.meanComments,
+      });
+      data[1].data.push({
+        x: readingTime.group,
+        y: readingTime.meanReactions,
+      });
+    } else {
+      data.push({
+        id: "Mean comments",
+        color: "hsl(132, 70%, 50%)",
+        data: [
+          {
+            x: readingTime.group,
+            y: readingTime.meanComments,
+          },
+        ],
+      });
+      data.push({
+        id: "Mean reactions",
+        color: "hsl(132, 70%, 50%)",
+        data: [
+          {
+            x: readingTime.group,
+            y: readingTime.meanReactions,
+          },
+        ],
+      });
+    }
+  });
+  setData(data);
+};
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [articleList, setArticleList] = useState<any[]>([]);
@@ -209,10 +254,8 @@ const Dashboard = () => {
   const [meanReactionsByPublishedTime, setMeanReactionsByPublishedTime] =
     useState<NivoHeatMapDataPoint[]>();
 
-  const [meanCommentsByReadingTime, setMeanCommentsByReadingTime] =
-    useState<NivoHeatMapDataPoint[]>();
-  const [meanReactionsByReadingTime, setMeanReactionsByReadingTime] =
-    useState<NivoHeatMapDataPoint[]>();
+  const [statByReadingTime, setStatByReadingTime] =
+    useState<NivoLineChartDataPoint[]>();
 
   useEffect(() => {
     if (articleList.length > 0) {
@@ -223,7 +266,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (groupedByPublishedTime) {
-      generateNivoDataFrom(
+      generateNivoDataFromPublishedTime(
         groupedByPublishedTime,
         setMeanCommentsByPublishedTime,
         setMeanReactionsByPublishedTime
@@ -233,10 +276,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (groupedByReadingTime) {
-      generateNivoDataFrom(
+      generateNivoDataFromReadingTime(
         groupedByReadingTime,
-        setMeanCommentsByReadingTime,
-        setMeanReactionsByReadingTime
+        setStatByReadingTime
       );
     }
   }, [groupedByReadingTime]);
@@ -285,7 +327,7 @@ const Dashboard = () => {
         ) : null}
       </Grid>
 
-      <Grid item lg={6}>
+      {/* <Grid item lg={6}>
         {meanCommentsByReadingTime ? (
           <CustomizedHeatMap
             data={meanCommentsByReadingTime}
@@ -307,7 +349,7 @@ const Dashboard = () => {
             title="Mean comments reactions count by article reading time"
           />
         ) : null}
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };
