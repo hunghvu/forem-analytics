@@ -11,10 +11,11 @@ import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
 // Utilities
 import { format, parseISO } from "date-fns";
-import { groupBy } from "lodash";
+import { groupBy, sortBy } from "lodash";
 
 // Components
 import CustomizedHeatMap from "./CustomizedHeatMap";
+import { Box } from "@mui/material";
 
 interface RawMetrics {
   tagOne: string | undefined;
@@ -190,8 +191,8 @@ const generateNivoDataFrom = (
       });
     }
   });
-  setMeanComments(meanCommentsData);
-  setMeanReactions(meanReactionsData);
+  setMeanComments(sortBy(meanCommentsData, (dataPoint) => dataPoint.id));
+  setMeanReactions(sortBy(meanReactionsData, (dataPoint) => dataPoint.id));
 };
 
 const Dashboard = () => {
@@ -241,7 +242,7 @@ const Dashboard = () => {
   }, [groupedByReadingTime]);
 
   return (
-    <>
+    <Box>
       <LoadingButton
         loading={loading}
         disabled={loading}
@@ -256,18 +257,42 @@ const Dashboard = () => {
       </LoadingButton>
       {/* {meanCommentsByPublishedTime ? <CustomizedHeatMap data={meanCommentsByPublishedTime}/>} */}
       {meanCommentsByPublishedTime ? (
-        <CustomizedHeatMap data={meanCommentsByPublishedTime} />
+        <CustomizedHeatMap
+          data={meanCommentsByPublishedTime}
+          axisTopLegend="Day of Week"
+          axisLeftLegend="Hour"
+          axisRightLegend="Hour"
+          title="Mean comments count by article published time"
+        />
       ) : null}
       {meanReactionsByPublishedTime ? (
-        <CustomizedHeatMap data={meanReactionsByPublishedTime} />
+        <CustomizedHeatMap
+          data={meanReactionsByPublishedTime}
+          axisTopLegend="Day of Week"
+          axisLeftLegend="Hour"
+          axisRightLegend="Hour"
+          title="Mean reactions count by article published time"
+        />
       ) : null}
       {meanCommentsByReadingTime ? (
-        <CustomizedHeatMap data={meanCommentsByReadingTime} />
+        <CustomizedHeatMap
+          data={meanCommentsByReadingTime}
+          axisTopLegend="Day of Week"
+          axisLeftLegend="Hour"
+          axisRightLegend="Hour"
+          title="Mean comments count by article reading time"
+        />
       ) : null}
       {meanReactionsByReadingTime ? (
-        <CustomizedHeatMap data={meanReactionsByReadingTime} />
+        <CustomizedHeatMap
+          data={meanReactionsByReadingTime}
+          axisTopLegend="Day of Week"
+          axisLeftLegend="Hour"
+          axisRightLegend="Hour"
+          title="Mean comments reactions count by article reading time"
+        />
       ) : null}
-    </>
+    </Box>
   );
 };
 
