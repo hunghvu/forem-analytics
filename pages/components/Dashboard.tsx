@@ -15,7 +15,7 @@ import { groupBy, sortBy } from "lodash";
 
 // Components
 import CustomizedHeatMap from "./CustomizedHeatMap";
-import { Box } from "@mui/material";
+import { Grid } from "@mui/material";
 
 interface RawMetrics {
   tagOne: string | undefined;
@@ -242,57 +242,73 @@ const Dashboard = () => {
   }, [groupedByReadingTime]);
 
   return (
-    <Box>
-      <LoadingButton
-        loading={loading}
-        disabled={loading}
-        startIcon={<PlayArrowOutlinedIcon />}
-        loadingPosition="start"
-        variant="outlined"
-        onClick={() => {
-          fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
-        }}
-      >
-        Fetch
-      </LoadingButton>
-      {/* {meanCommentsByPublishedTime ? <CustomizedHeatMap data={meanCommentsByPublishedTime}/>} */}
-      {meanCommentsByPublishedTime ? (
-        <CustomizedHeatMap
-          data={meanCommentsByPublishedTime}
-          axisTopLegend="Day of Week"
-          axisLeftLegend="Hour"
-          axisRightLegend="Hour"
-          title="Mean comments count by article published time"
-        />
-      ) : null}
-      {meanReactionsByPublishedTime ? (
-        <CustomizedHeatMap
-          data={meanReactionsByPublishedTime}
-          axisTopLegend="Day of Week"
-          axisLeftLegend="Hour"
-          axisRightLegend="Hour"
-          title="Mean reactions count by article published time"
-        />
-      ) : null}
-      {meanCommentsByReadingTime ? (
-        <CustomizedHeatMap
-          data={meanCommentsByReadingTime}
-          axisTopLegend="Day of Week"
-          axisLeftLegend="Hour"
-          axisRightLegend="Hour"
-          title="Mean comments count by article reading time"
-        />
-      ) : null}
-      {meanReactionsByReadingTime ? (
-        <CustomizedHeatMap
-          data={meanReactionsByReadingTime}
-          axisTopLegend="Day of Week"
-          axisLeftLegend="Hour"
-          axisRightLegend="Hour"
-          title="Mean comments reactions count by article reading time"
-        />
-      ) : null}
-    </Box>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <LoadingButton
+          loading={loading}
+          disabled={loading}
+          startIcon={<PlayArrowOutlinedIcon />}
+          loadingPosition="start"
+          variant="outlined"
+          onClick={() => {
+            fetchPublishedArticlesSortedByPublishDate(
+              setLoading,
+              setArticleList
+            );
+          }}
+        >
+          Fetch
+        </LoadingButton>
+      </Grid>
+
+      <Grid item lg={6}>
+        {meanCommentsByPublishedTime ? (
+          <CustomizedHeatMap
+            data={meanCommentsByPublishedTime}
+            axisTopLegend="Day of Week"
+            axisLeftLegend="Hour"
+            axisRightLegend="Hour"
+            title="Mean comments count by article published time"
+          />
+        ) : null}
+      </Grid>
+
+      <Grid item lg={6}>
+        {meanReactionsByPublishedTime ? (
+          <CustomizedHeatMap
+            data={meanReactionsByPublishedTime}
+            axisTopLegend="Day of Week"
+            axisLeftLegend="Hour"
+            axisRightLegend="Hour"
+            title="Mean reactions count by article published time"
+          />
+        ) : null}
+      </Grid>
+
+      <Grid item lg={6}>
+        {meanCommentsByReadingTime ? (
+          <CustomizedHeatMap
+            data={meanCommentsByReadingTime}
+            axisTopLegend="Day of Week"
+            axisLeftLegend="Hour"
+            axisRightLegend="Hour"
+            title="Mean comments count by article reading time"
+          />
+        ) : null}
+      </Grid>
+
+      <Grid item lg={6}>
+        {meanReactionsByReadingTime ? (
+          <CustomizedHeatMap
+            data={meanReactionsByReadingTime}
+            axisTopLegend="Day of Week"
+            axisLeftLegend="Hour"
+            axisRightLegend="Hour"
+            title="Mean comments reactions count by article reading time"
+          />
+        ) : null}
+      </Grid>
+    </Grid>
   );
 };
 
