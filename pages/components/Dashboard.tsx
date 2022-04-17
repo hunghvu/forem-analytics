@@ -2,11 +2,19 @@
  * @author Hung Vu
  */
 
+// React
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+
+// UI library
 import LoadingButton from "@mui/lab/LoadingButton";
 import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
+
+// Utilities
 import { format, parseISO } from "date-fns";
 import { groupBy } from "lodash";
+
+// Components
+import CustomizedHeatMap from "./CustomizedHeatMap";
 
 interface RawMetrics {
   tagOne: string | undefined;
@@ -27,8 +35,16 @@ interface AnalysisResult {
   meanReactions: number;
 }
 
+interface NivoHeatMapDataPoint {
+  id: string; // hour
+  data: {
+    x: string; // day of week
+    y: number;
+  }[];
+}
+
 const numberOfPage = 5; // default
-const articlesPerPage = 1000; //
+const articlesPerPage = 1000; // default
 
 const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading: Dispatch<SetStateAction<boolean>>,
@@ -87,7 +103,9 @@ const analyze = (
   >,
   setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
-  const getMeanCommentsAndReactionsByCriteria = (criteria: any) => {
+  const getMeanCommentsAndReactionsByCriteria = (
+    criteria: any
+  ): AnalysisResult[] => {
     // Analyze by published time
     let result: AnalysisResult[] = [];
     const grouped = groupBy(data, criteria);
@@ -120,18 +138,80 @@ const analyze = (
 
   setGroupByPublishedTime(groupedByPublishedTime);
   setGroupByReadingTime(groupedByReadingTime);
+};
 
-  // console.log(groupedByReadingTime);
+const generateNivoDataFrom = (
+  groupedData: AnalysisResult[],
+  setMeanComments: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>,
+  setMeanReactions: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>
+) => {
+  const meanCommentsData: NivoHeatMapDataPoint[] = [];
+  const meanReactionsData: NivoHeatMapDataPoint[] = [];
+
+  groupedData?.forEach((timeSlot) => {
+    const dayOfWeek = timeSlot.group.split(" ")[0];
+    const hour = timeSlot.group.split(" ")[1];
+    const idExistedInMeanCommentsData = meanCommentsData.filter(
+      (dataPoint) => dataPoint.id === hour
+    )[0];
+    if (idExistedInMeanCommentsData) {
+      idExistedInMeanCommentsData.data.push({
+        x: dayOfWeek,
+        y: timeSlot.meanComments,
+      });
+    } else {
+      meanCommentsData.push({
+        id: hour,
+        data: [
+          {
+            x: dayOfWeek,
+            y: timeSlot.meanComments,
+          },
+        ],
+      });
+    }
+    const idEexistedInMeanReactionssData = meanReactionsData.filter(
+      (dataPoint) => dataPoint.id === hour
+    )[0];
+    if (idEexistedInMeanReactionssData) {
+      idEexistedInMeanReactionssData.data.push({
+        x: dayOfWeek,
+        y: timeSlot.meanComments,
+      });
+    } else {
+      meanReactionsData.push({
+        id: hour,
+        data: [
+          {
+            x: dayOfWeek,
+            y: timeSlot.meanReactions,
+          },
+        ],
+      });
+    }
+  });
+  setMeanComments(meanCommentsData);
+  setMeanReactions(meanReactionsData);
 };
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [articleList, setArticleList] = useState<any[]>([]);
+
   const [groupedByPublishedTime, setGroupByPublishedTime] =
     useState<AnalysisResult[]>();
-
   const [groupedByReadingTime, setGroupByReadingTime] =
     useState<AnalysisResult[]>();
+
+  const [meanCommentsByPublishedTime, setMeanCommentsByPublishedTime] =
+    useState<NivoHeatMapDataPoint[]>();
+  const [meanReactionsByPublishedTime, setMeanReactionsByPublishedTime] =
+    useState<NivoHeatMapDataPoint[]>();
+
+  const [meanCommentsByReadingTime, setMeanCommentsByReadingTime] =
+    useState<NivoHeatMapDataPoint[]>();
+  const [meanReactionsByReadingTime, setMeanReactionsByReadingTime] =
+    useState<NivoHeatMapDataPoint[]>();
 
   useEffect(() => {
     if (articleList.length > 0) {
@@ -140,19 +220,54 @@ const Dashboard = () => {
     }
   }, [articleList]);
 
+  useEffect(() => {
+    if (groupedByPublishedTime) {
+      generateNivoDataFrom(
+        groupedByPublishedTime,
+        setMeanCommentsByPublishedTime,
+        setMeanReactionsByPublishedTime
+      );
+    }
+  }, [groupedByPublishedTime]);
+
+  useEffect(() => {
+    if (groupedByReadingTime) {
+      generateNivoDataFrom(
+        groupedByReadingTime,
+        setMeanCommentsByReadingTime,
+        setMeanReactionsByReadingTime
+      );
+    }
+  }, [groupedByReadingTime]);
+
   return (
-    <LoadingButton
-      loading={loading}
-      disabled={loading}
-      startIcon={<PlayArrowOutlinedIcon />}
-      loadingPosition="start"
-      variant="outlined"
-      onClick={() => {
-        fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
-      }}
-    >
-      Fetch
-    </LoadingButton>
+    <>
+      <LoadingButton
+        loading={loading}
+        disabled={loading}
+        startIcon={<PlayArrowOutlinedIcon />}
+        loadingPosition="start"
+        variant="outlined"
+        onClick={() => {
+          fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
+        }}
+      >
+        Fetch
+      </LoadingButton>
+      {/* {meanCommentsByPublishedTime ? <CustomizedHeatMap data={meanCommentsByPublishedTime}/>} */}
+      {meanCommentsByPublishedTime ? (
+        <CustomizedHeatMap data={meanCommentsByPublishedTime} />
+      ) : null}
+      {meanReactionsByPublishedTime ? (
+        <CustomizedHeatMap data={meanReactionsByPublishedTime} />
+      ) : null}
+      {meanCommentsByReadingTime ? (
+        <CustomizedHeatMap data={meanCommentsByReadingTime} />
+      ) : null}
+      {meanReactionsByReadingTime ? (
+        <CustomizedHeatMap data={meanReactionsByReadingTime} />
+      ) : null}
+    </>
   );
 };
 
