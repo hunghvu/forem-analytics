@@ -11,13 +11,14 @@ import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
 // Utilities
 import { format, parseISO } from "date-fns";
-import { groupBy, sortBy } from "lodash";
+import { groupBy, sortBy, meanBy, sumBy } from "lodash";
 
 // Components
 import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
 
+// TODO: Rename variables and interfaces
 interface RawMetrics {
   tagOne: string | undefined;
   tagTwo: string | undefined;
@@ -110,12 +111,64 @@ const analyze = (
   >,
   setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
+  // Remove outliers with z-score = 3
+  const commentsCountOutliersRemoved: RawMetrics[] = [];
+  const reactionsCountOutliersRemoved: RawMetrics[] = [];
+
+  // 4 loops, may result lower performance, but cleaner code
+  const meanCommentsCount = meanBy(
+    data,
+    (rawDataPoint) => rawDataPoint.commentsCount
+  );
+  const meanReactionsCount = meanBy(
+    data,
+    (rawDataPoint) => rawDataPoint.positiveReactionsCount
+  );
+  const standardDeviationCommentsCount = Math.sqrt(
+    meanBy(
+      data,
+      (rawDataPoint) =>
+        (rawDataPoint.commentsCount - meanCommentsCount) *
+        (rawDataPoint.commentsCount - meanCommentsCount)
+    )
+  );
+  const standardDeviationReactionsCount = Math.sqrt(
+    meanBy(
+      data,
+      (rawDataPoint) =>
+        (rawDataPoint.publicReactionsCount - meanReactionsCount) *
+        (rawDataPoint.publicReactionsCount - meanReactionsCount)
+    )
+  );
+  data.forEach((rawDataPoint) => {
+    if (
+      (rawDataPoint.commentsCount - meanCommentsCount) /
+        standardDeviationCommentsCount >
+        -3 &&
+      (rawDataPoint.commentsCount - meanCommentsCount) /
+        standardDeviationCommentsCount <
+        3
+    ) {
+      commentsCountOutliersRemoved.push(rawDataPoint);
+    }
+    if (
+      (rawDataPoint.positiveReactionsCount - meanReactionsCount) /
+        standardDeviationReactionsCount >
+        -3 &&
+      (rawDataPoint.positiveReactionsCount - meanReactionsCount) /
+        standardDeviationReactionsCount <
+        3
+    ) {
+      reactionsCountOutliersRemoved.push(rawDataPoint);
+    }
+  });
+
   const getMeanCommentsAndReactionsByCriteria = (
+    adjustedDataSet: RawMetrics[],
     criteria: any
   ): AnalysisResult[] => {
-    // Analyze by published time
     let result: AnalysisResult[] = [];
-    const grouped = groupBy(data, criteria);
+    const grouped = groupBy(adjustedDataSet, criteria);
     for (const [group, articleStat] of Object.entries(grouped)) {
       let meanComments = 0;
       let meanReactions = 0;
@@ -137,9 +190,11 @@ const analyze = (
   };
 
   const groupedByPublishedTime = getMeanCommentsAndReactionsByCriteria(
+    commentsCountOutliersRemoved,
     (item: RawMetrics) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
   const groupedByReadingTime = getMeanCommentsAndReactionsByCriteria(
+    reactionsCountOutliersRemoved,
     (item: RawMetrics) => item.readingTimeMinutes
   );
 
