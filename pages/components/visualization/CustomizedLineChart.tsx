@@ -51,7 +51,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({
       </header>
       <Line
         data={data}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+        margin={{ top: 60, right: 90, bottom: 60, left: 90 }}
         axisBottom={{
           legend: axisBottomLegend,
           legendOffset: 35,
@@ -70,32 +70,21 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({
         useMesh={true}
         legends={[
           {
-            anchor: "bottom-right",
+            anchor: "top-left",
             direction: "column",
             justify: false,
-            translateX: 100,
+            translateX: 20,
             translateY: 0,
-            itemsSpacing: 0,
-            itemDirection: "left-to-right",
             itemWidth: 80,
             itemHeight: 20,
             itemOpacity: 0.75,
-            symbolSize: 12,
+            symbolSize: 16,
             symbolShape: "circle",
             symbolBorderColor: "rgba(0, 0, 0, .5)",
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemBackground: "rgba(0, 0, 0, .03)",
-                  itemOpacity: 1,
-                },
-              },
-            ],
           },
         ]}
         height={700}
-        width={700}
+        width={window ? window.innerWidth - 200 : 1200}
       />
     </section>
   );
