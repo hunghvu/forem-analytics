@@ -11,12 +11,13 @@ import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
 
 // Utilities
 import { format, parseISO } from "date-fns";
-import { groupBy, sortBy, meanBy, sumBy } from "lodash";
+import { groupBy, sortBy, meanBy } from "lodash";
 
 // Components
 import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
+import removeOutLiers from "../../utils/RemoveOutliers";
 
 // TODO: Rename variables and interfaces
 interface RawMetrics {
@@ -112,56 +113,16 @@ const analyze = (
   setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
   // Remove outliers with z-score = 3
-  const commentsCountOutliersRemoved: RawMetrics[] = [];
-  const reactionsCountOutliersRemoved: RawMetrics[] = [];
-
-  // 4 loops, may result lower performance, but cleaner code
-  const meanCommentsCount = meanBy(
+  const commentsCountOutliersRemoved: RawMetrics[] = removeOutLiers(
     data,
-    (rawDataPoint) => rawDataPoint.commentsCount
-  );
-  const meanReactionsCount = meanBy(
+    "commentsCount",
+    3
+  ) as RawMetrics[];
+  const reactionsCountOutliersRemoved: RawMetrics[] = removeOutLiers(
     data,
-    (rawDataPoint) => rawDataPoint.positiveReactionsCount
-  );
-  const standardDeviationCommentsCount = Math.sqrt(
-    meanBy(
-      data,
-      (rawDataPoint) =>
-        (rawDataPoint.commentsCount - meanCommentsCount) *
-        (rawDataPoint.commentsCount - meanCommentsCount)
-    )
-  );
-  const standardDeviationReactionsCount = Math.sqrt(
-    meanBy(
-      data,
-      (rawDataPoint) =>
-        (rawDataPoint.publicReactionsCount - meanReactionsCount) *
-        (rawDataPoint.publicReactionsCount - meanReactionsCount)
-    )
-  );
-  data.forEach((rawDataPoint) => {
-    if (
-      (rawDataPoint.commentsCount - meanCommentsCount) /
-        standardDeviationCommentsCount >
-        -3 &&
-      (rawDataPoint.commentsCount - meanCommentsCount) /
-        standardDeviationCommentsCount <
-        3
-    ) {
-      commentsCountOutliersRemoved.push(rawDataPoint);
-    }
-    if (
-      (rawDataPoint.positiveReactionsCount - meanReactionsCount) /
-        standardDeviationReactionsCount >
-        -3 &&
-      (rawDataPoint.positiveReactionsCount - meanReactionsCount) /
-        standardDeviationReactionsCount <
-        3
-    ) {
-      reactionsCountOutliersRemoved.push(rawDataPoint);
-    }
-  });
+    "positiveReactionsCount",
+    3
+  ) as RawMetrics[];
 
   const getMeanCommentsAndReactionsByCriteria = (
     adjustedDataSet: RawMetrics[],
