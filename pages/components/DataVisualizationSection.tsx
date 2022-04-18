@@ -19,8 +19,7 @@ import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
 import removeOutLiers from "../../utils/RemoveOutliers";
 
-// TODO: Rename variables and interfaces
-interface RawMetrics {
+interface RawDataPoint {
   tagOne: string | undefined;
   tagTwo: string | undefined;
   tagThree: string | undefined;
@@ -74,8 +73,8 @@ const fetchPublishedArticlesSortedByPublishDate = async (
   setLoading(false);
 };
 
-const prepareData = (articleList: any[]): RawMetrics[] => {
-  let data: RawMetrics[] = [];
+const prepareData = (articleList: any[]): RawDataPoint[] => {
+  let data: RawDataPoint[] = [];
   for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
     for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
       let article = articleList[pageIndex][articleIndex];
@@ -86,7 +85,7 @@ const prepareData = (articleList: any[]): RawMetrics[] => {
       let publishedAtDayOfWeek = format(publishedAtDate, "ccc");
 
       let tagList = article["tag_list"];
-      let metrics: RawMetrics = {
+      let rawDataPoint: RawDataPoint = {
         tagOne: tagList ? tagList[0] : undefined,
         tagTwo: tagList ? tagList[1] : undefined,
         tagThree: tagList ? tagList[2] : undefined,
@@ -98,7 +97,7 @@ const prepareData = (articleList: any[]): RawMetrics[] => {
         publishedAtDayOfWeek,
         readingTimeMinutes: article["reading_time_minutes"],
       };
-      data.push(metrics);
+      data.push(rawDataPoint);
     }
   }
 
@@ -106,41 +105,16 @@ const prepareData = (articleList: any[]): RawMetrics[] => {
 };
 
 const analyze = (
-  data: RawMetrics[],
-  setGroupByPublishedTime: Dispatch<
-    SetStateAction<AnalysisResult[] | undefined>
-  >,
+  data: RawDataPoint[],
+  setGroupByPublishedTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
-  // Remove outliers with z-score = 3
-  const commentsCountOutliersRemoved: RawMetrics[] = removeOutLiers(
-    data,
-    "commentsCount",
-    3
-  ) as RawMetrics[];
-  const reactionsCountOutliersRemoved: RawMetrics[] = removeOutLiers(
-    data,
-    "positiveReactionsCount",
-    3
-  ) as RawMetrics[];
-
-  const getMeanCommentsAndReactionsByCriteria = (
-    adjustedDataSet: RawMetrics[],
-    criteria: any
-  ): AnalysisResult[] => {
+  const getMeanCommentsAndReactionsByCriteria = (adjustedDataSet: RawDataPoint[], criteria: any): AnalysisResult[] => {
     let result: AnalysisResult[] = [];
     const grouped = groupBy(adjustedDataSet, criteria);
     for (const [group, articleStat] of Object.entries(grouped)) {
-      let meanComments = 0;
-      let meanReactions = 0;
-      for (let i = 0; i < articleStat.length; i++) {
-        meanComments += articleStat[i].commentsCount;
-        meanReactions += articleStat[i].positiveReactionsCount;
-        if (i === articleStat.length - 1) {
-          meanComments /= articleStat.length;
-          meanReactions /= articleStat.length;
-        }
-      }
+      let meanComments = meanBy(articleStat, (adjustedDataPoint) => adjustedDataPoint.commentsCount);
+      let meanReactions = meanBy(articleStat, (adustedDataPoint) => adustedDataPoint.positiveReactionsCount);
       result.push({
         group,
         meanComments: parseFloat(meanComments.toFixed(2)),
@@ -149,15 +123,15 @@ const analyze = (
     }
     return result;
   };
+  // Remove outliers with z-score = 3
+  const commentsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "commentsCount", 3) as RawDataPoint[];
+  const reactionsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "positiveReactionsCount", 3) as RawDataPoint[];
 
   const groupedByPublishedTime = getMeanCommentsAndReactionsByCriteria(
     commentsCountOutliersRemoved,
-    (item: RawMetrics) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
+    (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
-  const groupedByReadingTime = getMeanCommentsAndReactionsByCriteria(
-    reactionsCountOutliersRemoved,
-    (item: RawMetrics) => item.readingTimeMinutes
-  );
+  const groupedByReadingTime = getMeanCommentsAndReactionsByCriteria(reactionsCountOutliersRemoved, (item: RawDataPoint) => item.readingTimeMinutes);
 
   setGroupByPublishedTime(groupedByPublishedTime);
   setGroupByReadingTime(groupedByReadingTime);
@@ -174,9 +148,7 @@ const generateNivoDataFromPublishedTime = (
   groupedData?.forEach((timeSlot) => {
     const dayOfWeek = timeSlot.group.split(" ")[0];
     const hour = timeSlot.group.split(" ")[1];
-    const idExistedInMeanCommentsData = meanCommentsData.filter(
-      (dataPoint) => dataPoint.id === hour
-    )[0];
+    const idExistedInMeanCommentsData = meanCommentsData.filter((adjustedDataPoint) => adjustedDataPoint.id === hour)[0];
     if (idExistedInMeanCommentsData) {
       idExistedInMeanCommentsData.data.push({
         x: dayOfWeek,
@@ -193,9 +165,7 @@ const generateNivoDataFromPublishedTime = (
         ],
       });
     }
-    const idEexistedInMeanReactionssData = meanReactionsData.filter(
-      (dataPoint) => dataPoint.id === hour
-    )[0];
+    const idEexistedInMeanReactionssData = meanReactionsData.filter((adjustedDataPoint) => adjustedDataPoint.id === hour)[0];
     if (idEexistedInMeanReactionssData) {
       idEexistedInMeanReactionssData.data.push({
         x: dayOfWeek,
@@ -213,14 +183,11 @@ const generateNivoDataFromPublishedTime = (
       });
     }
   });
-  setMeanComments(sortBy(meanCommentsData, (dataPoint) => dataPoint.id));
-  setMeanReactions(sortBy(meanReactionsData, (dataPoint) => dataPoint.id));
+  setMeanComments(sortBy(meanCommentsData, (adjustedDataPoint) => adjustedDataPoint.id));
+  setMeanReactions(sortBy(meanReactionsData, (adjustedDataPoint) => adjustedDataPoint.id));
 };
 
-const generateNivoDataFromReadingTime = (
-  groupedData: AnalysisResult[],
-  setData: Dispatch<SetStateAction<NivoLineChartDataPoint[] | undefined>>
-) => {
+const generateNivoDataFromReadingTime = (groupedData: AnalysisResult[], setData: Dispatch<SetStateAction<NivoLineChartDataPoint[] | undefined>>) => {
   let data: NivoLineChartDataPoint[] = [];
   groupedData.forEach((readingTime, index) => {
     if (index > 0) {
@@ -258,22 +225,17 @@ const generateNivoDataFromReadingTime = (
   setData(data);
 };
 
-const Dashboard = () => {
+const DataVisualizationSection = () => {
   const [loading, setLoading] = useState(false);
   const [articleList, setArticleList] = useState<any[]>([]);
 
-  const [groupedByPublishedTime, setGroupByPublishedTime] =
-    useState<AnalysisResult[]>();
-  const [groupedByReadingTime, setGroupByReadingTime] =
-    useState<AnalysisResult[]>();
+  const [groupedByPublishedTime, setGroupByPublishedTime] = useState<AnalysisResult[]>();
+  const [groupedByReadingTime, setGroupByReadingTime] = useState<AnalysisResult[]>();
 
-  const [meanCommentsByPublishedTime, setMeanCommentsByPublishedTime] =
-    useState<NivoHeatMapDataPoint[]>();
-  const [meanReactionsByPublishedTime, setMeanReactionsByPublishedTime] =
-    useState<NivoHeatMapDataPoint[]>();
+  const [meanCommentsByPublishedTime, setMeanCommentsByPublishedTime] = useState<NivoHeatMapDataPoint[]>();
+  const [meanReactionsByPublishedTime, setMeanReactionsByPublishedTime] = useState<NivoHeatMapDataPoint[]>();
 
-  const [statByReadingTime, setStatByReadingTime] =
-    useState<NivoLineChartDataPoint[]>();
+  const [statByReadingTime, setStatByReadingTime] = useState<NivoLineChartDataPoint[]>();
 
   useEffect(() => {
     if (articleList.length > 0) {
@@ -284,20 +246,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (groupedByPublishedTime) {
-      generateNivoDataFromPublishedTime(
-        groupedByPublishedTime,
-        setMeanCommentsByPublishedTime,
-        setMeanReactionsByPublishedTime
-      );
+      generateNivoDataFromPublishedTime(groupedByPublishedTime, setMeanCommentsByPublishedTime, setMeanReactionsByPublishedTime);
     }
   }, [groupedByPublishedTime]);
 
   useEffect(() => {
     if (groupedByReadingTime) {
-      generateNivoDataFromReadingTime(
-        groupedByReadingTime,
-        setStatByReadingTime
-      );
+      generateNivoDataFromReadingTime(groupedByReadingTime, setStatByReadingTime);
     }
   }, [groupedByReadingTime]);
 
@@ -311,10 +266,7 @@ const Dashboard = () => {
           loadingPosition="start"
           variant="outlined"
           onClick={() => {
-            fetchPublishedArticlesSortedByPublishDate(
-              setLoading,
-              setArticleList
-            );
+            fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
           }}
         >
           Fetch
@@ -359,4 +311,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DataVisualizationSection;

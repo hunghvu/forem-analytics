@@ -1,10 +1,8 @@
 import type { NextPage } from "next";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import Dashboard from "./components/Dashboard";
-import CustomizedHeatMap from "./components/visualization/CustomizedHeatMap";
+import DataVisualizationSection from "./components/DataVisualizationSection";
 
 // const HeatMap = dynamic(() => import("./components/HeatMap"), { ssr: false });
 
@@ -14,8 +12,7 @@ const Home: NextPage = () => {
       {/* <Head></Head> */}
 
       <main className={styles.main}>
-        <Dashboard />
-        {/* <CustomizedHeatMap /> */}
+        <DataVisualizationSection />
       </main>
 
       <footer className={styles.footer}></footer>
