@@ -18,6 +18,7 @@ import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
 import removeOutLiers from "../../utils/RemoveOutliers";
+import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles";
 
 interface RawDataPoint {
   tagOne: string | undefined;
@@ -50,28 +51,9 @@ interface NivoLineChartDataPoint extends NivoHeatMapDataPoint {
   color: string;
 }
 
+// TODO: Make these 2 values dynamic later
 const numberOfPage = 5; // default
 const articlesPerPage = 1000; // default
-
-const fetchPublishedArticlesSortedByPublishDate = async (
-  setLoading: Dispatch<SetStateAction<boolean>>,
-  setArticleList: Dispatch<SetStateAction<any[]>>
-) => {
-  const articles = [];
-  setLoading(true);
-
-  for (let i = 1; i <= numberOfPage; i++) {
-    const response = await fetch(
-      // FIXME: Seems like request will fail if there is not enough article?
-      `https://dev.to/api/articles/latest?page=${i}&per_page=${articlesPerPage}`
-    );
-    const pageContent = await response.json();
-    articles.push(pageContent);
-  }
-
-  setArticleList(articles);
-  setLoading(false);
-};
 
 const prepareData = (articleList: any[]): RawDataPoint[] => {
   let data: RawDataPoint[] = [];

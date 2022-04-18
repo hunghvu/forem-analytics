@@ -12,6 +12,15 @@ const Home: NextPage = () => {
       {/* <Head></Head> */}
 
       <main className={styles.main}>
+        <header style={{ padding: 16 }}>
+          <h1 style={{ fontFamily: "Segoe UI Semibold", fontSize: "36px", fontWeight: 500 }}>
+            Stats for "
+            <a href="https://www.forem.com/" style={{ color: "#3b49df" }}>
+              Forem-based communities
+            </a>
+            "
+          </h1>
+        </header>
         <DataVisualizationSection />
       </main>
 
