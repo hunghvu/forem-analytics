@@ -43,7 +43,7 @@ const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options,
           renderOption={(props, option) =>
             iconUrl ? (
               <Box component="li" {...props}>
-                <Image src={iconUrl} width={12} height={12} />
+                <Image src={iconUrl} width={24} height={24} />
                 {option}
               </Box>
             ) : null

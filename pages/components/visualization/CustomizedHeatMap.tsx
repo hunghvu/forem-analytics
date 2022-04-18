@@ -5,8 +5,16 @@
  */
 
 // ResponsiveHeatMap is currently broken in @nivo 0.79.0: https://github.com/plouc/nivo/issues/1889
+
+// React
+import type { FC } from "react";
+
+// MUI library
+import { Box } from "@mui/material";
+
+// Components
 import { HeatMap } from "@nivo/heatmap";
-import { FC } from "react";
+
 
 interface CustomizedHeatMapProps {
   data: {
@@ -22,15 +30,10 @@ interface CustomizedHeatMapProps {
   title: string;
 }
 
-const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({
-  data,
-  axisTopLegend,
-  axisLeftLegend,
-  axisRightLegend,
-  title,
-}) => {
+const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, axisLeftLegend, axisRightLegend, title }) => {
   return (
-    <section
+    <Box
+      component="section"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -39,8 +42,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({
         border: "1px",
         borderRadius: 16,
         // Equals to tailwinds shadow-lg
-        boxShadow:
-          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
         backgroundColor: "rgb(255, 255, 255)",
       }}
     >
@@ -84,7 +86,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({
         height={700}
         width={700}
       />
-    </section>
+    </Box>
   );
 };
 

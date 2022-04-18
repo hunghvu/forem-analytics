@@ -9,6 +9,9 @@
 // React
 import { FC } from "react";
 
+// MUI library
+import { Box } from "@mui/material";
+
 // Components
 import { Line } from "@nivo/line";
 
@@ -25,14 +28,10 @@ interface CustomizedLineChartProps {
   title: string;
 }
 
-const CustomizedLineChart: FC<CustomizedLineChartProps> = ({
-  data,
-  axisLeftLegend,
-  axisBottomLegend,
-  title,
-}) => {
+const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegend, axisBottomLegend, title }) => {
   return (
-    <section
+    <Box
+      component="section"
       style={{
         display: "flex",
         flexDirection: "column",
@@ -41,8 +40,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({
         border: "1px",
         borderRadius: 16,
         // Equals to tailwinds shadow-lg
-        boxShadow:
-          "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
         backgroundColor: "rgb(255, 255, 255)",
       }}
     >
@@ -86,7 +84,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({
         height={700}
         width={window ? window.innerWidth - 200 : 1200}
       />
-    </section>
+    </Box>
   );
 };
 
