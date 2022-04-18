@@ -28,7 +28,7 @@ const Home: NextPage = (props: any) => {
 };
 
 export async function getServerSideProps() {
-  const articleList = await fetchPublishedArticlesSortedByPublishDate();
+  const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to", 5, 1000);
   return { props: { articleList } };
 }
 
