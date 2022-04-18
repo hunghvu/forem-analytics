@@ -3,11 +3,8 @@
  */
 
 // React
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-// MUI library
-import LoadingButton from "@mui/lab/LoadingButton";
-import PlayArrowOutlinedIcon from "@mui/icons-material/PlayArrowOutlined";
+import { useEffect, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 
 // Utilities
 import { format, parseISO } from "date-fns";
@@ -18,7 +15,6 @@ import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
 import removeOutLiers from "../../utils/RemoveOutliers";
-import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles";
 
 interface RawDataPoint {
   tagOne: string | undefined;
@@ -207,8 +203,7 @@ const generateNivoDataFromReadingTime = (groupedData: AnalysisResult[], setData:
   setData(data);
 };
 
-const DataVisualizationSection = () => {
-  const [loading, setLoading] = useState(false);
+const DataVisualizationSection: FC<{ data: any }> = ({ data }) => {
   const [articleList, setArticleList] = useState<any[]>([]);
 
   const [groupedByPublishedTime, setGroupByPublishedTime] = useState<AnalysisResult[]>();
@@ -218,6 +213,10 @@ const DataVisualizationSection = () => {
   const [meanReactionsByPublishedTime, setMeanReactionsByPublishedTime] = useState<NivoHeatMapDataPoint[]>();
 
   const [statByReadingTime, setStatByReadingTime] = useState<NivoLineChartDataPoint[]>();
+
+  useEffect(() => {
+    setArticleList(data);
+  }, []);
 
   useEffect(() => {
     if (articleList.length > 0) {
@@ -240,21 +239,6 @@ const DataVisualizationSection = () => {
 
   return (
     <Grid container spacing={8}>
-      <Grid item xs={12}>
-        <LoadingButton
-          loading={loading}
-          disabled={loading}
-          startIcon={<PlayArrowOutlinedIcon />}
-          loadingPosition="start"
-          variant="outlined"
-          onClick={() => {
-            fetchPublishedArticlesSortedByPublishDate(setLoading, setArticleList);
-          }}
-        >
-          Fetch
-        </LoadingButton>
-      </Grid>
-
       <Grid item lg={6}>
         {meanCommentsByPublishedTime ? (
           <CustomizedHeatMap

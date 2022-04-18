@@ -1,15 +1,15 @@
-import type { Dispatch, SetStateAction } from "react";
-
+/**
+ * @author Hung Vu
+ */
 const numberOfPage = 5; // default
 const articlesPerPage = 1000; // default
 
-const fetchPublishedArticlesSortedByPublishDate = async (
-  setLoading: Dispatch<SetStateAction<boolean>>,
-  setArticleList: Dispatch<SetStateAction<any[]>>
-) => {
+/**
+ * Fetch pulished articles that are sorted by publish date.
+ * @returns List of articles
+ */
+const fetchPublishedArticlesSortedByPublishDate = async () => {
   const articles = [];
-  setLoading(true);
-
   for (let i = 1; i <= numberOfPage; i++) {
     const response = await fetch(
       // FIXME: Seems like request will fail if there is not enough article?
@@ -18,9 +18,7 @@ const fetchPublishedArticlesSortedByPublishDate = async (
     const pageContent = await response.json();
     articles.push(pageContent);
   }
-
-  setArticleList(articles);
-  setLoading(false);
+  return articles;
 };
 
 export default fetchPublishedArticlesSortedByPublishDate;

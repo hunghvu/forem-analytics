@@ -1,12 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
+import fetchPublishedArticlesSortedByPublishDate from "../utils/FetchArticles";
 import DataVisualizationSection from "./components/DataVisualizationSection";
 
-// const HeatMap = dynamic(() => import("./components/HeatMap"), { ssr: false });
-
-const Home: NextPage = () => {
+const Home: NextPage = (props: any) => {
   return (
     <div className={styles.container}>
       {/* <Head></Head> */}
@@ -21,12 +19,17 @@ const Home: NextPage = () => {
             "
           </h1>
         </header>
-        <DataVisualizationSection />
+        <DataVisualizationSection data={props.articleList} />
       </main>
 
       <footer className={styles.footer}></footer>
     </div>
   );
 };
+
+export async function getServerSideProps() {
+  const articleList = await fetchPublishedArticlesSortedByPublishDate();
+  return { props: { articleList } };
+}
 
 export default Home;
