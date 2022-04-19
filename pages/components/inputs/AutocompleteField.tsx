@@ -14,8 +14,10 @@ import Image from "next/image";
 import { Autocomplete, Box, TextField } from "@mui/material";
 
 // Utilities
-import { Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
+
+// Components
+import { Controller } from "react-hook-form";
 
 interface AutocompleteFieldProps {
   name: string;

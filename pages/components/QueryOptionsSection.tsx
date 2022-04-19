@@ -6,19 +6,21 @@
 import type { FC } from "react";
 
 // MUI library
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 
 // Utilities
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
 
 // Components
 import AutocompleteField from "./inputs/AutocompleteField";
+import TextInputField from "./inputs/TextInputField";
 
 interface FormInputs {
   community: { label: string; communityUrl: string; iconUrl: string } | null;
-  numberOfPages: number | null;
-  articlesPerPage: number | null;
-  zScore: number | null;
+  numberOfPages: string | null;
+  articlesPerPage: string | null;
+  zScore: string | null;
 }
 
 const availableCommunities = [
@@ -118,9 +120,9 @@ const QueryOptionsSection: FC = () => {
   } = useForm<FormInputs>({
     defaultValues: {
       community: null,
-      numberOfPages: null,
-      articlesPerPage: null,
-      zScore: null,
+      numberOfPages: "",
+      articlesPerPage: "",
+      zScore: "",
     },
   });
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log(data);
@@ -131,9 +133,49 @@ const QueryOptionsSection: FC = () => {
       <Grid item xs={12} md={4}>
         <AutocompleteField name={"community"} control={control} options={availableCommunities} label={"Your favorite community ❤️"} errors={errors} />
       </Grid>
-      {/* <Grid item xs={12} md={4}>
-        <AutocompleteField name={"url"} control={control} options={availableCommunities} label={"Your favorite community ❤️"} errors={errors} />
-      </Grid> */}
+      <Grid item xs={12} md={4}>
+        <TextInputField
+          name={"numberOfPages"}
+          control={control}
+          label={"Number of pages per query"}
+          errors={errors}
+          // Value as number seems to work only with type number input
+          // which is not recommended in MUI
+          rules={{ required: true, pattern: /^[1-9]{1}[0-9]*$/ }} // min is 1
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <TextInputField
+          name={"articlesPerPage"}
+          control={control}
+          label={"Number of articles per page (1 - 1000)"}
+          errors={errors}
+          rules={{ required: true, pattern: /^1000$|^[1-9]{1}[0-9]{0,2}$/ }} // range is 1 - 1000
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <TextInputField
+          name={"zScore"}
+          control={control}
+          label={"Z-score"}
+          errors={errors}
+          rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <Button
+          onClick={() => {
+            reset({
+              community: null,
+              numberOfPages: "",
+              articlesPerPage: "",
+              zScore: "",
+            });
+          }}
+        >
+          Reset
+        </Button>
+      </Grid>
       <Grid item xs={12} md={4}>
         <Button type="submit">Submit</Button>
       </Grid>
