@@ -6,7 +6,7 @@
 import type { FC } from "react";
 
 // MUI library
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Paper } from "@mui/material";
 
 // Utilities
 import { useForm } from "react-hook-form";
@@ -127,59 +127,84 @@ const QueryOptionsSection: FC = () => {
   });
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log(data);
 
+  const flexRowCenter = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
   return (
-    // Using Grid inside a box breaks the layout for some reasons?
-    <Grid container justifyContent="space-evenly" alignItems="center" direction="row" component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Grid item xs={12} md={4}>
-        <AutocompleteField name={"community"} control={control} options={availableCommunities} label={"Your favorite community ❤️"} errors={errors} />
+    <Paper
+      elevation={2}
+      style={{
+        border: "1px",
+        borderRadius: 16,
+        padding: 20,
+        margin: 20,
+        minWidth: "90vw",
+      }}
+      component="section"
+    >
+      <Grid container direction="row" spacing={4} component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Grid item xs={12} sm={6} md={3}>
+          <AutocompleteField
+            name={"community"}
+            control={control}
+            options={availableCommunities}
+            label={"❤️ Your favorite community "}
+            errors={errors}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextInputField
+            name={"numberOfPages"}
+            control={control}
+            label={"# pages per query (>=1)"}
+            errors={errors}
+            // Value as number seems to work only with type number input
+            // which is not recommended in MUI
+            rules={{ required: true, pattern: /^[1-9]{1}[0-9]*$/ }} // min is 1
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextInputField
+            name={"articlesPerPage"}
+            control={control}
+            label={"# articles per page (1 - 1000)"}
+            errors={errors}
+            rules={{ required: true, pattern: /^1000$|^[1-9]{1}[0-9]{0,2}$/ }} // range is 1 - 1000
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <TextInputField
+            name={"zScore"}
+            control={control}
+            label={"Z-score"}
+            errors={errors}
+            rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
+          />
+        </Grid>
+        <Grid item xs={6} style={flexRowCenter}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              reset({
+                community: null,
+                numberOfPages: "",
+                articlesPerPage: "",
+                zScore: "",
+              });
+            }}
+          >
+            Reset
+          </Button>
+        </Grid>
+        <Grid item xs={6} style={flexRowCenter}>
+          <Button variant="outlined" type="submit">
+            Submit
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={4}>
-        <TextInputField
-          name={"numberOfPages"}
-          control={control}
-          label={"Number of pages per query"}
-          errors={errors}
-          // Value as number seems to work only with type number input
-          // which is not recommended in MUI
-          rules={{ required: true, pattern: /^[1-9]{1}[0-9]*$/ }} // min is 1
-        />
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <TextInputField
-          name={"articlesPerPage"}
-          control={control}
-          label={"Number of articles per page (1 - 1000)"}
-          errors={errors}
-          rules={{ required: true, pattern: /^1000$|^[1-9]{1}[0-9]{0,2}$/ }} // range is 1 - 1000
-        />
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <TextInputField
-          name={"zScore"}
-          control={control}
-          label={"Z-score"}
-          errors={errors}
-          rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
-        />
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <Button
-          onClick={() => {
-            reset({
-              community: null,
-              numberOfPages: "",
-              articlesPerPage: "",
-              zScore: "",
-            });
-          }}
-        >
-          Reset
-        </Button>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <Button type="submit">Submit</Button>
-      </Grid>
-    </Grid>
+    </Paper>
   );
 };
 

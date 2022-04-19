@@ -10,11 +10,10 @@
 import type { FC } from "react";
 
 // MUI library
-import { Box } from "@mui/material";
+import { Paper } from "@mui/material";
 
 // Components
 import { HeatMap } from "@nivo/heatmap";
-
 
 interface CustomizedHeatMapProps {
   data: {
@@ -32,8 +31,8 @@ interface CustomizedHeatMapProps {
 
 const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, axisLeftLegend, axisRightLegend, title }) => {
   return (
-    <Box
-      component="section"
+    <Paper
+      elevation={2}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -41,11 +40,9 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         alignItems: "center",
         border: "1px",
         borderRadius: 16,
-        // Equals to tailwinds shadow-lg
-        boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
-        backgroundColor: "rgb(255, 255, 255)",
-        margin: 20
+        margin: 20,
       }}
+      component="section"
     >
       <header>
         <h2>{title}</h2>
@@ -87,7 +84,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         height={700}
         width={700}
       />
-    </Box>
+    </Paper>
   );
 };
 

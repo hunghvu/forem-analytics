@@ -42,6 +42,7 @@ const TextInputField: FC<TextInputFieldProps> = ({ name, control, label, errors,
           error={!!errors?.[name]}
           helperText={errors?.[name] && "Missing or invalid value."}
           required
+          fullWidth
         />
       )}
     />
