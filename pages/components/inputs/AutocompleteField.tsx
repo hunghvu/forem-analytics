@@ -20,13 +20,12 @@ import type { Control } from "react-hook-form";
 interface AutocompleteFieldProps {
   name: string;
   control: Control<any, any> | undefined;
-  options: string[];
+  options: any;
   label: string;
   errors: any;
-  iconUrl?: string;
 }
 
-const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options, label, errors, iconUrl }) => {
+const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options, label, errors }) => {
   return (
     <Controller
       name={name}
@@ -41,10 +40,12 @@ const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options,
           }}
           value={value}
           renderOption={(props, option) =>
-            iconUrl ? (
+            option.iconUrl ? (
               <Box component="li" {...props}>
-                <Image src={iconUrl} width={24} height={24} />
-                {option}
+                <Box style={{ marginRight: 12 }}>
+                  <Image src={option.iconUrl} alt={options.label} width={20} height={20} style={{ marginRight: 24 }} />
+                </Box>
+                {option.label}
               </Box>
             ) : null
           }
