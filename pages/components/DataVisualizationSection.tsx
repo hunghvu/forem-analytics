@@ -238,8 +238,9 @@ const DataVisualizationSection: FC<{ data: any }> = ({ data }) => {
   }, [groupedByReadingTime]);
 
   return (
-    <Grid container spacing={8}>
-      <Grid item lg={6}>
+    // Spacing cause the root grid to overflow
+    <Grid container component="section">
+      <Grid item xs={12} lg={6}>
         {meanCommentsByPublishedTime ? (
           <CustomizedHeatMap
             data={meanCommentsByPublishedTime}
@@ -251,7 +252,7 @@ const DataVisualizationSection: FC<{ data: any }> = ({ data }) => {
         ) : null}
       </Grid>
 
-      <Grid item lg={6}>
+      <Grid item xs={12} lg={6}>
         {meanReactionsByPublishedTime ? (
           <CustomizedHeatMap
             data={meanReactionsByPublishedTime}

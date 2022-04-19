@@ -1,6 +1,6 @@
 /**
- * @author Hung Vu 
- * 
+ * @author Hung Vu
+ *
  * Home page.
  */
 import { Box } from "@mui/material";
@@ -23,9 +23,10 @@ const Home: NextPage = (props: any) => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: "rgb(245, 245, 245)",
         }}
       >
-        <Box component="header" style={{ padding: 16 }}>
+        <Box component="header">
           <h1 style={{ fontFamily: "Segoe UI Semibold", fontSize: "36px", fontWeight: 500 }}>
             Stats for "
             <a href="https://www.forem.com/" style={{ color: "#3b49df" }}>
@@ -35,7 +36,7 @@ const Home: NextPage = (props: any) => {
           </h1>
         </Box>
         <QueryOptionsSection />
-        {/* <DataVisualizationSection data={props.articleList} /> */}
+        <DataVisualizationSection data={props.articleList} />
       </Box>
       <Box component="footer"></Box>
     </Box>
