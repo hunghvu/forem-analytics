@@ -6,7 +6,7 @@
 import type { FC } from "react";
 
 // MUI library
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 
 // Utilities
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -15,10 +15,10 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import AutocompleteField from "./inputs/AutocompleteField";
 
 interface FormInputs {
-  url: string;
-  numberOfPages: number;
-  articlesPerPage: number;
-  zScore: number;
+  community: { label: string; communityUrl: string; iconUrl: string } | null;
+  numberOfPages: number | null;
+  articlesPerPage: number | null;
+  zScore: number | null;
 }
 
 const availableCommunities = [
@@ -115,18 +115,25 @@ const QueryOptionsSection: FC = () => {
     control,
     reset,
     formState: { errors },
-  } = useForm<FormInputs>();
+  } = useForm<FormInputs>({
+    defaultValues: {
+      community: null,
+      numberOfPages: null,
+      articlesPerPage: null,
+      zScore: null,
+    },
+  });
   const onSubmit: SubmitHandler<FormInputs> = (data) => console.log(data);
 
   return (
     // Using Grid inside a box breaks the layout for some reasons?
     <Grid container justifyContent="space-evenly" alignItems="center" direction="row" component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
       <Grid item xs={12} md={4}>
-        <AutocompleteField name={"url"} control={control} options={availableCommunities} label={"Your favorite community ❤️"} errors={errors} />
+        <AutocompleteField name={"community"} control={control} options={availableCommunities} label={"Your favorite community ❤️"} errors={errors} />
       </Grid>
-      <Grid item xs={12} md={4}>
+      {/* <Grid item xs={12} md={4}>
         <AutocompleteField name={"url"} control={control} options={availableCommunities} label={"Your favorite community ❤️"} errors={errors} />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12} md={4}>
         <Button type="submit">Submit</Button>
       </Grid>

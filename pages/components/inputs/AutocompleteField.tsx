@@ -35,10 +35,11 @@ const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options,
         <Autocomplete
           disablePortal
           options={options}
-          onChange={(_event, item) => {
+          onChange={(_, item) => {
             onChange(item);
           }}
           value={value}
+          isOptionEqualToValue={(option, value) => option.label === value.label}
           renderOption={(props, option) =>
             option.iconUrl ? (
               <Box component="li" {...props}>
