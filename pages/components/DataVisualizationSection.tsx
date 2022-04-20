@@ -20,6 +20,7 @@ interface DataVisualizationSectionProps {
   articleList: any;
   zScore: number;
 }
+
 interface RawDataPoint {
   tagList: string[];
   commentsCount: number;
@@ -32,8 +33,7 @@ interface RawDataPoint {
 
 interface AnalysisResult {
   group: string;
-  meanComments: number;
-  meanReactions: number;
+  metric: number;
 }
 
 interface NivoHeatMapDataPoint {
@@ -81,85 +81,100 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
 const analyze = (
   data: RawDataPoint[],
   zScore: number,
-  setGroupByPublishedTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
-  setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
+  setMeanCommentsByPublishedTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
+  setMeanReactionsByPublishedTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
+  setGroupByReadingTimeWithoutCommentsOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
+  setGroupByReadingTimeWithoutReactionsOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
-  const getMeanCommentsAndReactionsByCriteria = (adjustedDataSet: RawDataPoint[], criteria: any): AnalysisResult[] => {
+  /**
+   * For a given criteria, e.g., group by time slot, or group by reading time, return mean comments and reactions.
+   * The results can differ based on a given data set. For example, a data set with comments count outliers removed
+   * is different than a data set with reactions count outliers removed.
+   *
+   * @param adjustedDataSet Data set with outliers removed
+   * @param metricName "commentsCount" or "positiveReactionsCount"
+   * @param criteria To perform "group by"
+   * @returns Mean comments and reactions
+   */
+  const getMeanOfMetricByCriteria = (
+    adjustedDataSet: RawDataPoint[],
+    metricName: "commentsCount" | "positiveReactionsCount",
+    criteria: any
+  ): AnalysisResult[] => {
     let result: AnalysisResult[] = [];
     const grouped = groupBy(adjustedDataSet, criteria);
     for (const [group, articleStat] of Object.entries(grouped)) {
-      let meanComments = meanBy(articleStat, (adjustedDataPoint) => adjustedDataPoint.commentsCount);
-      let meanReactions = meanBy(articleStat, (adustedDataPoint) => adustedDataPoint.positiveReactionsCount);
+      let meanOfMetric = meanBy(articleStat, (adjustedDataPoint) => adjustedDataPoint[metricName]);
       result.push({
         group,
-        meanComments: parseFloat(meanComments.toFixed(2)),
-        meanReactions: parseFloat(meanReactions.toFixed(2)),
+        metric: parseFloat(meanOfMetric.toFixed(2)),
       });
     }
     return result;
   };
-  // Remove outliers with z-score = 3
+
+  // Remove outliers
   const commentsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "commentsCount", zScore) as RawDataPoint[];
   const reactionsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "positiveReactionsCount", zScore) as RawDataPoint[];
 
-  const groupedByPublishedTime = getMeanCommentsAndReactionsByCriteria(
+  const meanCommentsByPublishedTimeWithoutCommentsCountOutliers = getMeanOfMetricByCriteria(
     commentsCountOutliersRemoved,
+    "commentsCount",
     (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
-  const groupedByReadingTime = getMeanCommentsAndReactionsByCriteria(reactionsCountOutliersRemoved, (item: RawDataPoint) => item.readingTimeMinutes);
+  setMeanCommentsByPublishedTimeWithoutOutliers(meanCommentsByPublishedTimeWithoutCommentsCountOutliers);
 
-  setGroupByPublishedTime(groupedByPublishedTime);
-  setGroupByReadingTime(groupedByReadingTime);
+  const meanReactionsCountByPublishedTimeWithoutCommentsCountOutliers = getMeanOfMetricByCriteria(
+    reactionsCountOutliersRemoved,
+    "positiveReactionsCount",
+    (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
+  );
+
+  setMeanReactionsByPublishedTimeWithoutOutliers(meanReactionsCountByPublishedTimeWithoutCommentsCountOutliers);
+
+  const groupedByReadingTimeWithoutCommentsOutliers = getMeanOfMetricByCriteria(
+    commentsCountOutliersRemoved,
+    "commentsCount",
+    (item: RawDataPoint) => item.readingTimeMinutes
+  );
+  setGroupByReadingTimeWithoutCommentsOutliers(groupedByReadingTimeWithoutCommentsOutliers);
+
+  const groupedByReadingTimeWithoutReactionsOutliers = getMeanOfMetricByCriteria(
+    reactionsCountOutliersRemoved,
+    "positiveReactionsCount",
+    (item: RawDataPoint) => item.readingTimeMinutes
+  );
+  setGroupByReadingTimeWithoutReactionsOutliers(groupedByReadingTimeWithoutReactionsOutliers);
 };
 
 const generateNivoDataFromPublishedTime = (
   groupedData: AnalysisResult[],
-  setMeanComments: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>,
-  setMeanReactions: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>
+  setMeanForMetric: Dispatch<SetStateAction<NivoHeatMapDataPoint[] | undefined>>
 ) => {
-  const meanCommentsData: NivoHeatMapDataPoint[] = [];
-  const meanReactionsData: NivoHeatMapDataPoint[] = [];
+  const metricData: NivoHeatMapDataPoint[] = [];
 
   groupedData?.forEach((timeSlot) => {
     const dayOfWeek = timeSlot.group.split(" ")[0];
     const hour = timeSlot.group.split(" ")[1];
-    const idExistedInMeanCommentsData = meanCommentsData.filter((adjustedDataPoint) => adjustedDataPoint.id === hour)[0];
-    if (idExistedInMeanCommentsData) {
-      idExistedInMeanCommentsData.data.push({
+    const idExistedInMetricData = metricData.filter((adjustedDataPoint) => adjustedDataPoint.id === hour)[0];
+    if (idExistedInMetricData) {
+      idExistedInMetricData.data.push({
         x: dayOfWeek,
-        y: timeSlot.meanComments,
+        y: timeSlot.metric,
       });
     } else {
-      meanCommentsData.push({
+      metricData.push({
         id: hour,
         data: [
           {
             x: dayOfWeek,
-            y: timeSlot.meanComments,
-          },
-        ],
-      });
-    }
-    const idEexistedInMeanReactionssData = meanReactionsData.filter((adjustedDataPoint) => adjustedDataPoint.id === hour)[0];
-    if (idEexistedInMeanReactionssData) {
-      idEexistedInMeanReactionssData.data.push({
-        x: dayOfWeek,
-        y: timeSlot.meanComments,
-      });
-    } else {
-      meanReactionsData.push({
-        id: hour,
-        data: [
-          {
-            x: dayOfWeek,
-            y: timeSlot.meanReactions,
+            y: timeSlot.metric,
           },
         ],
       });
     }
   });
-  setMeanComments(sortBy(meanCommentsData, (adjustedDataPoint) => adjustedDataPoint.id));
-  setMeanReactions(sortBy(meanReactionsData, (adjustedDataPoint) => adjustedDataPoint.id));
+  setMeanForMetric(sortBy(metricData, (adjustedDataPoint) => adjustedDataPoint.id));
 };
 
 const generateNivoDataFromReadingTime = (groupedData: AnalysisResult[], setData: Dispatch<SetStateAction<NivoLineChartDataPoint[] | undefined>>) => {
@@ -201,61 +216,73 @@ const generateNivoDataFromReadingTime = (groupedData: AnalysisResult[], setData:
 };
 
 const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList, zScore }) => {
-  const [groupedByPublishedTime, setGroupByPublishedTime] = useState<AnalysisResult[]>();
-  const [groupedByReadingTime, setGroupByReadingTime] = useState<AnalysisResult[]>();
+  // By published time
+  const [meanCommentsByPublishedTimeWithoutOutliers, setMeanCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
+  const [meanReactionsByPublishedTimeWithoutOutliers, setMeanReactionsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
+  const [heatMapDataForMeanCommentsCount, setHeatMapDataForMeanCommentsCount] = useState<NivoHeatMapDataPoint[]>();
+  const [heatMapDataForMeanReactionsCount, setHeatMapDataForMeanReactionsCount] = useState<NivoHeatMapDataPoint[]>();
 
-  const [meanCommentsByPublishedTime, setMeanCommentsByPublishedTime] = useState<NivoHeatMapDataPoint[]>();
-  const [meanReactionsByPublishedTime, setMeanReactionsByPublishedTime] = useState<NivoHeatMapDataPoint[]>();
+  // By reading time
+  const [groupedByReadingTimeWithoutCommentsOutliers, setGroupByReadingTimeWithoutCommentsOutliers] = useState<AnalysisResult[]>();
+  const [groupedByReadingTimeWithoutReactionsOutliers, setGroupByReadingTimeWithoutReactionsOutliers] = useState<AnalysisResult[]>();
 
   const [statByReadingTime, setStatByReadingTime] = useState<NivoLineChartDataPoint[]>();
 
   useEffect(() => {
     if (articleList && articleList.length > 0) {
       const data = prepareData(articleList);
-      analyze(data, zScore, setGroupByPublishedTime, setGroupByReadingTime);
+      analyze(
+        data,
+        zScore,
+        setMeanCommentsByPublishedTimeWithoutOutliers,
+        setMeanReactionsByPublishedTimeWithoutOutliers,
+        setGroupByReadingTimeWithoutCommentsOutliers,
+        setGroupByReadingTimeWithoutReactionsOutliers
+      );
     }
   }, [articleList]);
 
   useEffect(() => {
-    if (groupedByPublishedTime) {
-      generateNivoDataFromPublishedTime(groupedByPublishedTime, setMeanCommentsByPublishedTime, setMeanReactionsByPublishedTime);
+    if (meanCommentsByPublishedTimeWithoutOutliers && meanReactionsByPublishedTimeWithoutOutliers) {
+      generateNivoDataFromPublishedTime(meanCommentsByPublishedTimeWithoutOutliers, setHeatMapDataForMeanCommentsCount);
+      generateNivoDataFromPublishedTime(meanReactionsByPublishedTimeWithoutOutliers, setHeatMapDataForMeanReactionsCount);
     }
-  }, [groupedByPublishedTime]);
+  }, [meanCommentsByPublishedTimeWithoutOutliers, meanReactionsByPublishedTimeWithoutOutliers]);
 
   useEffect(() => {
-    if (groupedByReadingTime) {
-      generateNivoDataFromReadingTime(groupedByReadingTime, setStatByReadingTime);
+    if (groupedByReadingTimeWithoutReactionsOutliers) {
+      generateNivoDataFromReadingTime(groupedByReadingTimeWithoutReactionsOutliers, setStatByReadingTime);
     }
-  }, [groupedByReadingTime]);
+  }, [groupedByReadingTimeWithoutReactionsOutliers]);
 
   return (
     // Spacing cause the root grid to overflow
     <Grid container component="section">
       <Grid item xs={12} lg={6}>
-        {meanCommentsByPublishedTime ? (
+        {heatMapDataForMeanCommentsCount ? (
           <CustomizedHeatMap
-            data={meanCommentsByPublishedTime}
+            data={heatMapDataForMeanCommentsCount}
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title="Mean comments count by article published time"
+            title="Mean comments count by published time (outliers are removed)"
           />
         ) : null}
       </Grid>
 
       <Grid item xs={12} lg={6}>
-        {meanReactionsByPublishedTime ? (
+        {heatMapDataForMeanReactionsCount ? (
           <CustomizedHeatMap
-            data={meanReactionsByPublishedTime}
+            data={heatMapDataForMeanReactionsCount}
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title="Mean reactions count by article published time"
+            title="Mean reactions count by published time (outliers are removed)"
           />
         ) : null}
       </Grid>
 
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         {statByReadingTime ? (
           <CustomizedLineChart
             data={statByReadingTime}
@@ -264,7 +291,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
             title="Mean comments count and mean reactions count by article reading time"
           />
         ) : null}
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };
