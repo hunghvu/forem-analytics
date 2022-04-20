@@ -81,7 +81,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
           },
         ]}
         height={700}
-        width={window ? window.innerWidth - 200 : 1200}
+        width={700}
       />
     </Paper>
   );
