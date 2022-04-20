@@ -6,15 +6,17 @@
 import { useEffect, useState } from "react";
 import type { Dispatch, FC, SetStateAction } from "react";
 
+// MUI library
+import { Grid } from "@mui/material";
+
 // Utilities
 import { format, parseISO } from "date-fns";
 import { groupBy, sortBy, meanBy } from "lodash";
+import removeOutLiers from "../../utils/RemoveOutliers";
 
 // Components
 import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
-import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
-import removeOutLiers from "../../utils/RemoveOutliers";
 
 interface DataVisualizationSectionProps {
   articleList: any;

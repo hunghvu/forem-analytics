@@ -81,7 +81,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
             title: "Value →",
           },
         ]}
-        height={700}
+        height={500}
         width={700}
       />
     </Paper>

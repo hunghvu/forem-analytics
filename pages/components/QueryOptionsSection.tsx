@@ -159,7 +159,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, set
             data!.numberOfPages!,
             data!.articlesPerPage!
           );
-          setzScore(parseInt(data.zScore!));
+          setzScore(parseFloat(data.zScore!));
           setArticleList(articleList);
         })}
         noValidate

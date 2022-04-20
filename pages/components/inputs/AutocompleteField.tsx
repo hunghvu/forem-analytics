@@ -58,7 +58,7 @@ const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options,
               {...params}
               label={label}
               error={!!errors?.[name]}
-              helperText={errors?.[name] && "Field is required."}
+              helperText={(errors?.[name] && "Missing or invalid value.") ?? " "}
               required
             />
           )}

@@ -80,7 +80,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
             symbolBorderColor: "rgba(0, 0, 0, .5)",
           },
         ]}
-        height={700}
+        height={400}
         width={700}
       />
     </Paper>
