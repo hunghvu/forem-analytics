@@ -18,12 +18,10 @@ import removeOutLiers from "../../utils/RemoveOutliers";
 
 interface DataVisualizationSectionProps {
   articleList: any;
+  zScore: number;
 }
 interface RawDataPoint {
-  tagOne: string | undefined;
-  tagTwo: string | undefined;
-  tagThree: string | undefined;
-  tagFour: string | undefined;
+  tagList: string[];
   commentsCount: number;
   positiveReactionsCount: number;
   publicReactionsCount: number; // Unused for now
@@ -62,12 +60,8 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
       let publishedAtHour = format(publishedAtDate, "HH");
       let publishedAtDayOfWeek = format(publishedAtDate, "ccc");
 
-      let tagList = article["tag_list"];
       let rawDataPoint: RawDataPoint = {
-        tagOne: tagList ? tagList[0] : undefined,
-        tagTwo: tagList ? tagList[1] : undefined,
-        tagThree: tagList ? tagList[2] : undefined,
-        tagFour: tagList ? tagList[3] : undefined,
+        tagList: article["tag_list"],
         commentsCount: article["comments_count"],
         positiveReactionsCount: article["positive_reactions_count"],
         publicReactionsCount: article["public_reactions_count"], // Unused for now
@@ -86,6 +80,7 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
 
 const analyze = (
   data: RawDataPoint[],
+  zScore: number,
   setGroupByPublishedTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setGroupByReadingTime: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
@@ -104,8 +99,8 @@ const analyze = (
     return result;
   };
   // Remove outliers with z-score = 3
-  const commentsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "commentsCount", 3) as RawDataPoint[];
-  const reactionsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "positiveReactionsCount", 3) as RawDataPoint[];
+  const commentsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "commentsCount", zScore) as RawDataPoint[];
+  const reactionsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "positiveReactionsCount", zScore) as RawDataPoint[];
 
   const groupedByPublishedTime = getMeanCommentsAndReactionsByCriteria(
     commentsCountOutliersRemoved,
@@ -205,7 +200,7 @@ const generateNivoDataFromReadingTime = (groupedData: AnalysisResult[], setData:
   setData(data);
 };
 
-const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList }) => {
+const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList, zScore }) => {
   const [groupedByPublishedTime, setGroupByPublishedTime] = useState<AnalysisResult[]>();
   const [groupedByReadingTime, setGroupByReadingTime] = useState<AnalysisResult[]>();
 
@@ -217,7 +212,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
   useEffect(() => {
     if (articleList && articleList.length > 0) {
       const data = prepareData(articleList);
-      analyze(data, setGroupByPublishedTime, setGroupByReadingTime);
+      analyze(data, zScore, setGroupByPublishedTime, setGroupByReadingTime);
     }
   }, [articleList]);
 

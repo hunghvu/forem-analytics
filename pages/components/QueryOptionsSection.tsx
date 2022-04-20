@@ -18,6 +18,7 @@ import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles
 
 interface QueryOptionsSectionProps {
   setArticleList: Dispatch<SetStateAction<any>>;
+  setzScore: Dispatch<SetStateAction<number>>;
 }
 
 interface FormInputs {
@@ -115,7 +116,7 @@ const availableCommunities = [
   },
 ];
 
-const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) => {
+const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, setzScore }) => {
   const {
     handleSubmit,
     control,
@@ -158,6 +159,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
             data!.numberOfPages!,
             data!.articlesPerPage!
           );
+          setzScore(parseInt(data.zScore!));
           setArticleList(articleList);
         })}
         noValidate

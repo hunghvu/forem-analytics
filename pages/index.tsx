@@ -14,7 +14,10 @@ import QueryOptionsSection from "./components/QueryOptionsSection";
 
 const Home: NextPage = (props: any) => {
   const [articleList, setArticleList] = useState<any[]>([]);
-  useEffect(() => setArticleList(props.articleList), []);
+  const [zScore, setzScore] = useState<number>(3);
+  useEffect(() => {
+    setArticleList(props.articleList);
+  }, []);
   return (
     <Box>
       {/* <Head></Head> */}
@@ -38,8 +41,8 @@ const Home: NextPage = (props: any) => {
             "
           </h1>
         </Box>
-        <QueryOptionsSection setArticleList={setArticleList} />
-        <DataVisualizationSection articleList={articleList} />
+        <QueryOptionsSection setArticleList={setArticleList} setzScore={setzScore} />
+        <DataVisualizationSection articleList={articleList} zScore={zScore} />
       </Box>
       <Box component="footer"></Box>
     </Box>

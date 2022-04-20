@@ -9,11 +9,7 @@ import { meanBy } from "lodash";
  * @param chosenPropertyName Name of an object's property which has outliers to be removed.
  * @returns A new data set with outliers removed. For example, "speed" in {car.speed}
  */
-const removeOutLiers = (
-  dataSet: any[],
-  chosenPropertyName: string,
-  zScore: number
-) => {
+const removeOutLiers = (dataSet: any[], chosenPropertyName: string, zScore: number) => {
   try {
     if (!dataSet || dataSet.length === 0) {
       throw "Invalid data set.";
@@ -24,23 +20,14 @@ const removeOutLiers = (
 
     // 4 loops, may result lower performance, but cleaner code
     const outliersRemoved: any[] = [];
-    const mean = meanBy(
-      dataSet,
-      (rawDataPoint) => rawDataPoint[chosenPropertyName]
-    );
+    const mean = meanBy(dataSet, (rawDataPoint) => rawDataPoint[chosenPropertyName]);
     const standardDeviation = Math.sqrt(
-      meanBy(
-        dataSet,
-        (rawDataPoint) =>
-          (rawDataPoint[chosenPropertyName] - mean) *
-          (rawDataPoint[chosenPropertyName] - mean)
-      )
+      meanBy(dataSet, (rawDataPoint) => (rawDataPoint[chosenPropertyName] - mean) * (rawDataPoint[chosenPropertyName] - mean))
     );
     dataSet.forEach((rawDataPoint) => {
       if (
-        (rawDataPoint[chosenPropertyName] - mean) / standardDeviation >
-          -zScore &&
-        (rawDataPoint[chosenPropertyName] - mean) / standardDeviation < zScore
+        (rawDataPoint[chosenPropertyName] - mean) / standardDeviation >= -zScore &&
+        (rawDataPoint[chosenPropertyName] - mean) / standardDeviation <= zScore
       ) {
         outliersRemoved.push(rawDataPoint);
       }
