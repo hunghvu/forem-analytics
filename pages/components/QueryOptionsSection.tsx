@@ -186,10 +186,10 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
           <TextInputField
             name={"articlesPerPage"}
             control={control}
-            label={"# articles per page (100 - 1000)"}
+            label={"# articles per page (30 - 99)"}
             errors={errors}
             // If the data set is too small, heat map disappears?
-            rules={{ required: true, pattern: /^1000$|^[1-9]{1}[0-9]{2}$/ }} // range is 100 - 1000
+            rules={{ required: true, pattern: /^[3-9]{1}[0-9]{1}$/ }} // range is 100 - 1000
           />
         </Grid>
         <Grid item xs={12} md={6} lg={3}>

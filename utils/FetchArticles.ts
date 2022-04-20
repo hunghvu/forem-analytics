@@ -11,16 +11,20 @@
  * @returns List of articles
  */
 const fetchPublishedArticlesSortedByPublishDate = async (url: string, numberOfPages: string, articlesPerPage: string) => {
-  const articles = [];
-  for (let i = 1; i <= parseInt(numberOfPages); i++) {
-    const response = await fetch(
-      // FIXME: Seems like request will fail if there is not enough article?
-      `${url}/api/articles/latest?page=${i}&per_page=${articlesPerPage}`
-    );
-    const pageContent = await response.json();
-    articles.push(pageContent);
+  try {
+    const articles = [];
+    for (let i = 1; i <= parseInt(numberOfPages); i++) {
+      const response = await fetch(
+        // For some reasons, if articles per page is too high, it can results in 502.
+        `${url}api/articles/latest?page=${i}&per_page=${articlesPerPage}`
+      );
+      const pageContent = await response.json();
+      articles.push(pageContent);
+    }
+    return articles;
+  } catch (error) {
+    console.error("Cannot fetch data from the community server.");
   }
-  return articles;
 };
 
 export default fetchPublishedArticlesSortedByPublishDate;
