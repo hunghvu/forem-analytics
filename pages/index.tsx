@@ -6,12 +6,15 @@
 import { Box } from "@mui/material";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import fetchPublishedArticlesSortedByPublishDate from "../utils/FetchArticles";
 import DataVisualizationSection from "./components/DataVisualizationSection";
 import QueryOptionsSection from "./components/QueryOptionsSection";
 
 const Home: NextPage = (props: any) => {
+  const [articleList, setArticleList] = useState<any[]>([]);
+  useEffect(() => setArticleList(props.articleList), []);
   return (
     <Box>
       {/* <Head></Head> */}
@@ -35,8 +38,8 @@ const Home: NextPage = (props: any) => {
             "
           </h1>
         </Box>
-        <QueryOptionsSection />
-        <DataVisualizationSection data={props.articleList} />
+        <QueryOptionsSection setArticleList={setArticleList} />
+        <DataVisualizationSection articleList={articleList} />
       </Box>
       <Box component="footer"></Box>
     </Box>
@@ -44,7 +47,7 @@ const Home: NextPage = (props: any) => {
 };
 
 export async function getServerSideProps() {
-  const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to", 5, 1000);
+  const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to", "5", "1000");
   return { props: { articleList } };
 }
 

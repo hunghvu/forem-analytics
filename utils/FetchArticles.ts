@@ -7,12 +7,12 @@
  *
  * @param url Link to the home page of community. Do not include "/" at the end
  * @param numberOfPage Number of pages to query
- * @param articlesPerPage Number of articles per page
+ * @param articlesPerPages Number of articles per page
  * @returns List of articles
  */
-const fetchPublishedArticlesSortedByPublishDate = async (url: string, numberOfPage: number, articlesPerPage: number) => {
+const fetchPublishedArticlesSortedByPublishDate = async (url: string, numberOfPages: string, articlesPerPage: string) => {
   const articles = [];
-  for (let i = 1; i <= numberOfPage; i++) {
+  for (let i = 1; i <= parseInt(numberOfPages); i++) {
     const response = await fetch(
       // FIXME: Seems like request will fail if there is not enough article?
       `${url}/api/articles/latest?page=${i}&per_page=${articlesPerPage}`

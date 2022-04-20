@@ -16,6 +16,9 @@ import { Grid } from "@mui/material";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
 import removeOutLiers from "../../utils/RemoveOutliers";
 
+interface DataVisualizationSectionProps {
+  articleList: any;
+}
 interface RawDataPoint {
   tagOne: string | undefined;
   tagTwo: string | undefined;
@@ -47,16 +50,13 @@ interface NivoLineChartDataPoint extends NivoHeatMapDataPoint {
   color: string;
 }
 
-// TODO: Make these 2 values dynamic later
-const numberOfPage = 5; // default
-const articlesPerPage = 1000; // default
-
 const prepareData = (articleList: any[]): RawDataPoint[] => {
+  let numberOfPages = 0;
+  let articlesPerPage = 0;
   let data: RawDataPoint[] = [];
-  for (let pageIndex = 0; pageIndex < numberOfPage; pageIndex++) {
-    for (let articleIndex = 0; articleIndex < articlesPerPage; articleIndex++) {
-      let article = articleList[pageIndex][articleIndex];
-
+  while (articleList[numberOfPages]) {
+    while (articleList[numberOfPages][articlesPerPage]) {
+      let article = articleList[numberOfPages][articlesPerPage];
       // Parse ISO date to local browser timezone
       let publishedAtDate = parseISO(article["published_at"]);
       let publishedAtHour = format(publishedAtDate, "HH");
@@ -76,9 +76,11 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
         readingTimeMinutes: article["reading_time_minutes"],
       };
       data.push(rawDataPoint);
+      articlesPerPage += 1;
     }
+    articlesPerPage = 1;
+    numberOfPages += 1;
   }
-
   return data;
 };
 
@@ -203,9 +205,7 @@ const generateNivoDataFromReadingTime = (groupedData: AnalysisResult[], setData:
   setData(data);
 };
 
-const DataVisualizationSection: FC<{ data: any }> = ({ data }) => {
-  const [articleList, setArticleList] = useState<any[]>([]);
-
+const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList }) => {
   const [groupedByPublishedTime, setGroupByPublishedTime] = useState<AnalysisResult[]>();
   const [groupedByReadingTime, setGroupByReadingTime] = useState<AnalysisResult[]>();
 
@@ -215,11 +215,7 @@ const DataVisualizationSection: FC<{ data: any }> = ({ data }) => {
   const [statByReadingTime, setStatByReadingTime] = useState<NivoLineChartDataPoint[]>();
 
   useEffect(() => {
-    setArticleList(data);
-  }, []);
-
-  useEffect(() => {
-    if (articleList.length > 0) {
+    if (articleList && articleList.length > 0) {
       const data = prepareData(articleList);
       analyze(data, setGroupByPublishedTime, setGroupByReadingTime);
     }

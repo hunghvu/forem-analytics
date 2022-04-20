@@ -3,18 +3,22 @@
  */
 
 // React
-import type { FC } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
 
 // MUI library
 import { Button, Grid, Paper } from "@mui/material";
 
 // Utilities
 import { useForm } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
 
 // Components
 import AutocompleteField from "./inputs/AutocompleteField";
 import TextInputField from "./inputs/TextInputField";
+import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles";
+
+interface QueryOptionsSectionProps {
+  setArticleList: Dispatch<SetStateAction<any>>;
+}
 
 interface FormInputs {
   community: { label: string; communityUrl: string; iconUrl: string } | null;
@@ -111,7 +115,7 @@ const availableCommunities = [
   },
 ];
 
-const QueryOptionsSection: FC = () => {
+const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) => {
   const {
     handleSubmit,
     control,
@@ -125,7 +129,6 @@ const QueryOptionsSection: FC = () => {
       zScore: "",
     },
   });
-  const onSubmit: SubmitHandler<FormInputs> = (data) => console.log(data);
 
   const flexRowCenter = {
     display: "flex",
@@ -144,8 +147,22 @@ const QueryOptionsSection: FC = () => {
       }}
       component="section"
     >
-      <Grid container direction="row" spacing={4} component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Grid item xs={12} sm={6} md={3}>
+      <Grid
+        container
+        direction="row"
+        spacing={4}
+        component="form"
+        onSubmit={handleSubmit(async (data) => {
+          const articleList = await fetchPublishedArticlesSortedByPublishDate(
+            data.community!.communityUrl!,
+            data!.numberOfPages!,
+            data!.articlesPerPage!
+          );
+          setArticleList(articleList);
+        })}
+        noValidate
+      >
+        <Grid item xs={12} md={6} lg={3}>
           <AutocompleteField
             name={"community"}
             control={control}
@@ -154,7 +171,7 @@ const QueryOptionsSection: FC = () => {
             errors={errors}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} md={6} lg={3}>
           <TextInputField
             name={"numberOfPages"}
             control={control}
@@ -165,20 +182,21 @@ const QueryOptionsSection: FC = () => {
             rules={{ required: true, pattern: /^[1-9]{1}[0-9]*$/ }} // min is 1
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} md={6} lg={3}>
           <TextInputField
             name={"articlesPerPage"}
             control={control}
-            label={"# articles per page (1 - 1000)"}
+            label={"# articles per page (100 - 1000)"}
             errors={errors}
-            rules={{ required: true, pattern: /^1000$|^[1-9]{1}[0-9]{0,2}$/ }} // range is 1 - 1000
+            // If the data set is too small, heat map disappears?
+            rules={{ required: true, pattern: /^1000$|^[1-9]{1}[0-9]{2}$/ }} // range is 100 - 1000
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} md={6} lg={3}>
           <TextInputField
             name={"zScore"}
             control={control}
-            label={"Z-score"}
+            label={"Z-score (0.00 - 3.00)"}
             errors={errors}
             rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
           />
