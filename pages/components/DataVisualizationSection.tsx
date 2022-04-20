@@ -61,7 +61,7 @@ interface NivoLineChartDataPoint extends NivoheatMapDataByPublishedTimePoint {
  * @returns Mean comments and reactions
  */
 const getMeanOfMetricByCriteria = (
-  adjustedDataSet: RawDataPoint[],
+  adjustedDataSet: any[],
   metricName: "commentsCount" | "positiveReactionsCount",
   criteria: any
 ): AnalysisResult[] => {
@@ -147,6 +147,29 @@ const analyze = (
     (item: RawDataPoint) => item.readingTimeMinutes
   );
   setMeanReactionsByReadingTimeWithoutOutliers(meanReactionsByReadingTimeWithoutOutliers);
+
+  const commentsCountBasedOnTags: { tag: string; commentsCount: number }[] = [];
+  const reactionsCountBasedOnTags: { tag: string; positiveReactionsCount: number }[] = [];
+  commentsCountOutliersRemoved.forEach((adjustedDataPoint) => {
+    adjustedDataPoint.tagList.forEach((tag) => {
+      commentsCountBasedOnTags.push({ tag, commentsCount: adjustedDataPoint.commentsCount });
+    });
+  });
+  reactionsCountOutliersRemoved.forEach((adjustedDataPoint) => {
+    adjustedDataPoint.tagList.forEach((tag) => {
+      reactionsCountBasedOnTags.push({ tag, positiveReactionsCount: adjustedDataPoint.positiveReactionsCount });
+    });
+  });
+  const meanCommentsCountBasedOnTagsWithoutOutliers = getMeanOfMetricByCriteria(
+    commentsCountBasedOnTags,
+    "commentsCount",
+    (item: { tag: string; commentsCount: number }) => item.tag
+  );
+  const meanReactionsCountBasedOnTagsWithoutOutliers = getMeanOfMetricByCriteria(
+    reactionsCountBasedOnTags,
+    "positiveReactionsCount",
+    (item: { tag: string; reactionsCount: number }) => item.tag
+  );
 };
 
 const generateNivoDataFromPublishedTime = (
