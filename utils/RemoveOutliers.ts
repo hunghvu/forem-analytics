@@ -26,8 +26,9 @@ const removeOutLiers = (dataSet: any[], chosenPropertyName: string, zScore: numb
     );
     dataSet.forEach((rawDataPoint) => {
       if (
-        (rawDataPoint[chosenPropertyName] - mean) / standardDeviation >= -zScore &&
-        (rawDataPoint[chosenPropertyName] - mean) / standardDeviation <= zScore
+        ((rawDataPoint[chosenPropertyName] - mean) / standardDeviation >= -zScore &&
+          (rawDataPoint[chosenPropertyName] - mean) / standardDeviation <= zScore) ||
+        standardDeviation === 0
       ) {
         outliersRemoved.push(rawDataPoint);
       }
