@@ -20,6 +20,7 @@ import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
 import CustomizedLineChart from "./visualization/CustomizedLineChart";
 import type { GridColDef } from "@mui/x-data-grid";
 import CustomizedDataGrid from "./visualization/CustomizedDataGrid";
+import ByTagsSection from "./ByTagsSection";
 
 interface DataVisualizationSectionProps {
   articleList: any;
@@ -36,7 +37,7 @@ interface RawDataPoint {
   readingTimeMinutes: number;
 }
 
-interface AnalysisResult {
+export interface AnalysisResult {
   group: string;
   metric: number;
 }
@@ -238,53 +239,24 @@ const generateNivoDataFromReadingTime = (
   setData(data);
 };
 
-const generateDataGridFromTags = (
-  dataByTagsWithoutOutliers: AnalysisResult[],
-  headerName: string,
-  setDataByTagsWithoutOutliers: Dispatch<SetStateAction<CustomizedDataGridProps | undefined>>
-) => {
-  const rows: any[] = [];
-  const columns: GridColDef[] = [
-    { field: "col1", headerName: "Tag name", width: 300 },
-    { field: "col2", headerName, width: 300 },
-  ];
-  let id = 1;
-  dataByTagsWithoutOutliers.forEach((adjustedDataPoint) => {
-    rows.push({
-      id,
-      col1: adjustedDataPoint.group,
-      col2: adjustedDataPoint.metric,
-    });
-    id += 1;
-  });
-  setDataByTagsWithoutOutliers({
-    rows,
-    columns,
-  });
-};
-
 const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList, zScore }) => {
   // By published time
-  const [CommentsByPublishedTimeWithoutOutliers, setCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
-  const [ReactionsByPublishedTimeWithoutOutliers, setReactionsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
+  const [commentsByPublishedTimeWithoutOutliers, setCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
+  const [reactionsByPublishedTimeWithoutOutliers, setReactionsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
   const [heatMapDataByPublishedTimeForCommentsCount, setheatMapDataByPublishedTimeForCommentsCount] =
     useState<NivoheatMapDataByPublishedTimePoint[]>();
   const [heatMapDataByPublishedTimeForReactionsCount, setheatMapDataByPublishedTimeForReactionsCount] =
     useState<NivoheatMapDataByPublishedTimePoint[]>();
 
   // By reading time
-  const [CommentsByReadingTimeWithoutOutliers, setCommentsByReadingTimeWithoutOutliers] = useState<AnalysisResult[]>();
-  const [ReactionsByReadingTimeWithoutOutliers, setReactionsByReadingTimeWithoutOutliers] = useState<AnalysisResult[]>();
+  const [commentsByReadingTimeWithoutOutliers, setCommentsByReadingTimeWithoutOutliers] = useState<AnalysisResult[]>();
+  const [reactionsByReadingTimeWithoutOutliers, setReactionsByReadingTimeWithoutOutliers] = useState<AnalysisResult[]>();
   const [lineChartDataByReadingTimeForCommentsCount, setLineChartDataByReadingTimeForCommentsCount] = useState<NivoLineChartDataPoint[]>();
   const [lineChartDataByReadingTimeForReactionsCount, setLineChartDataByReadingTimeForReactionsCount] = useState<NivoLineChartDataPoint[]>();
 
   // By tags
-  const [CommentsByTagsWithoutOutliers, setCommentsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
-  const [ReactionsByTagsWithoutOutliers, setReactionsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
-  const [dataByTagsForCommentsCount, setDataByTagsForCommentsCount] = useState<CustomizedDataGridProps>();
-  const [dataByTagsForReactionsCount, setDataByTagsForReactionstsCount] = useState<CustomizedDataGridProps>();
-
-  // const [statByReadingTime, setStatByReadingTime] = useState<NivoLineChartDataPoint[]>();
+  const [commentsByTagsWithoutOutliers, setCommentsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
+  const [reactionsByTagsWithoutOutliers, setReactionsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
 
   // Analyze new article list upon changes
   useEffect(() => {
@@ -305,86 +277,74 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
 
   // Generate new heatmaps upon changes
   useEffect(() => {
-    if (CommentsByPublishedTimeWithoutOutliers && ReactionsByPublishedTimeWithoutOutliers) {
-      generateNivoDataFromPublishedTime(CommentsByPublishedTimeWithoutOutliers, setheatMapDataByPublishedTimeForCommentsCount);
-      generateNivoDataFromPublishedTime(ReactionsByPublishedTimeWithoutOutliers, setheatMapDataByPublishedTimeForReactionsCount);
+    if (commentsByPublishedTimeWithoutOutliers && reactionsByPublishedTimeWithoutOutliers) {
+      generateNivoDataFromPublishedTime(commentsByPublishedTimeWithoutOutliers, setheatMapDataByPublishedTimeForCommentsCount);
+      generateNivoDataFromPublishedTime(reactionsByPublishedTimeWithoutOutliers, setheatMapDataByPublishedTimeForReactionsCount);
     }
-  }, [CommentsByPublishedTimeWithoutOutliers, ReactionsByPublishedTimeWithoutOutliers]);
+  }, [commentsByPublishedTimeWithoutOutliers, reactionsByPublishedTimeWithoutOutliers]);
 
   // Generate new line chart upon changes
   useEffect(() => {
-    if (CommentsByReadingTimeWithoutOutliers && ReactionsByReadingTimeWithoutOutliers) {
-      generateNivoDataFromReadingTime(CommentsByReadingTimeWithoutOutliers, "Comments count", setLineChartDataByReadingTimeForCommentsCount);
-      generateNivoDataFromReadingTime(ReactionsByReadingTimeWithoutOutliers, "Reactions count", setLineChartDataByReadingTimeForReactionsCount);
+    if (commentsByReadingTimeWithoutOutliers && reactionsByReadingTimeWithoutOutliers) {
+      generateNivoDataFromReadingTime(commentsByReadingTimeWithoutOutliers, "Comments count", setLineChartDataByReadingTimeForCommentsCount);
+      generateNivoDataFromReadingTime(reactionsByReadingTimeWithoutOutliers, "Reactions count", setLineChartDataByReadingTimeForReactionsCount);
     }
-  }, [CommentsByReadingTimeWithoutOutliers, ReactionsByReadingTimeWithoutOutliers]);
-
-  // Generate new tables upon changes
-  useEffect(() => {
-    if (CommentsByTagsWithoutOutliers && ReactionsByTagsWithoutOutliers) {
-      generateDataGridFromTags(CommentsByTagsWithoutOutliers, `Comments count (Z-score = ${zScore})`, setDataByTagsForCommentsCount);
-      generateDataGridFromTags(ReactionsByTagsWithoutOutliers, `Reactions count (Z-score = ${zScore})`, setDataByTagsForReactionstsCount);
-    }
-  }, [CommentsByTagsWithoutOutliers, ReactionsByTagsWithoutOutliers]);
+  }, [commentsByReadingTimeWithoutOutliers, reactionsByReadingTimeWithoutOutliers]);
 
   return (
-    // Spacing cause the root grid to overflow
-    <Grid container component="section">
-      <Grid item xs={12} lg={6}>
-        {heatMapDataByPublishedTimeForCommentsCount ? (
-          <CustomizedHeatMap
-            data={heatMapDataByPublishedTimeForCommentsCount}
-            axisTopLegend="Day of Week"
-            axisLeftLegend="Hour"
-            axisRightLegend="Hour"
-            title={`Comments count by published time (Z-score = ${zScore})`}
-          />
-        ) : null}
-      </Grid>
+    <>
+      <Grid container component="section">
+        <Grid item xs={12} lg={6}>
+          {heatMapDataByPublishedTimeForCommentsCount ? (
+            <CustomizedHeatMap
+              data={heatMapDataByPublishedTimeForCommentsCount}
+              axisTopLegend="Day of Week"
+              axisLeftLegend="Hour"
+              axisRightLegend="Hour"
+              title={`Comments count by published time (Z-score = ${zScore})`}
+            />
+          ) : null}
+        </Grid>
 
-      <Grid item xs={12} lg={6}>
-        {heatMapDataByPublishedTimeForReactionsCount ? (
-          <CustomizedHeatMap
-            data={heatMapDataByPublishedTimeForReactionsCount}
-            axisTopLegend="Day of Week"
-            axisLeftLegend="Hour"
-            axisRightLegend="Hour"
-            title={`Reactions count by published time (Z-score = ${zScore})`}
-          />
-        ) : null}
-      </Grid>
+        <Grid item xs={12} lg={6}>
+          {heatMapDataByPublishedTimeForReactionsCount ? (
+            <CustomizedHeatMap
+              data={heatMapDataByPublishedTimeForReactionsCount}
+              axisTopLegend="Day of Week"
+              axisLeftLegend="Hour"
+              axisRightLegend="Hour"
+              title={`Reactions count by published time (Z-score = ${zScore})`}
+            />
+          ) : null}
+        </Grid>
 
-      <Grid item xs={12} lg={6}>
-        {lineChartDataByReadingTimeForCommentsCount ? (
-          <CustomizedLineChart
-            data={lineChartDataByReadingTimeForCommentsCount}
-            axisLeftLegend="Count"
-            axisBottomLegend="Reading time (minutes)"
-            title={`Comments count by reading time (Z-score = ${zScore})`}
-          />
-        ) : null}
+        <Grid item xs={12} lg={6}>
+          {lineChartDataByReadingTimeForCommentsCount ? (
+            <CustomizedLineChart
+              data={lineChartDataByReadingTimeForCommentsCount}
+              axisLeftLegend="Count"
+              axisBottomLegend="Reading time (minutes)"
+              title={`Comments count by reading time (Z-score = ${zScore})`}
+            />
+          ) : null}
+        </Grid>
+        <Grid item xs={12} lg={6}>
+          {lineChartDataByReadingTimeForReactionsCount ? (
+            <CustomizedLineChart
+              data={lineChartDataByReadingTimeForReactionsCount}
+              axisLeftLegend="Count"
+              axisBottomLegend="Reading time (minutes)"
+              title={`Reactions count by reading time (Z-score = ${zScore})`}
+            />
+          ) : null}
+        </Grid>
       </Grid>
-      <Grid item xs={12} lg={6}>
-        {lineChartDataByReadingTimeForReactionsCount ? (
-          <CustomizedLineChart
-            data={lineChartDataByReadingTimeForReactionsCount}
-            axisLeftLegend="Count"
-            axisBottomLegend="Reading time (minutes)"
-            title={`Reactions count by reading time (Z-score = ${zScore})`}
-          />
-        ) : null}
-      </Grid>
-      <Grid item xs={12} lg={6}>
-        {dataByTagsForCommentsCount ? (
-          <CustomizedDataGrid rows={dataByTagsForCommentsCount.rows} columns={dataByTagsForCommentsCount.columns} />
-        ) : null}
-      </Grid>
-      <Grid item xs={12} lg={6}>
-        {dataByTagsForReactionsCount ? (
-          <CustomizedDataGrid rows={dataByTagsForReactionsCount.rows} columns={dataByTagsForReactionsCount.columns} />
-        ) : null}
-      </Grid>
-    </Grid>
+      <ByTagsSection
+        commentsByTagsWithoutOutliers={commentsByTagsWithoutOutliers}
+        reactionsByTagsWithoutOutliers={reactionsByTagsWithoutOutliers}
+        zScore={zScore}
+      />
+    </>
   );
 };
 
