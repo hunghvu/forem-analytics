@@ -8,13 +8,14 @@ import type { Dispatch, FC, SetStateAction } from "react";
 
 // Utilities
 import { format, parseISO } from "date-fns";
-import { groupBy, sumBy } from "lodash";
+import { groupBy, meanBy, sumBy } from "lodash";
 import removeOutLiers from "../../utils/RemoveOutliers";
 
 // Components
 import ByTagsSection from "./sub-section/ByTagsSection";
 import ByPublishedTimeSection from "./sub-section/ByPublishedTimeSection";
 import ByReadingTimeSection from "./sub-section/ByReadingTimeSection";
+import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 
 interface DataVisualizationSectionProps {
   articleList: any;
@@ -47,6 +48,7 @@ export interface AnalysisResult {
  * @returns  comments and reactions
  */
 const getSumOfMetricByCriteria = (
+  calculationMethod: "by-sum" | "by-mean",
   adjustedDataSet: any[],
   metricName: "commentsCount" | "positiveReactionsCount",
   criteria: any
@@ -54,10 +56,15 @@ const getSumOfMetricByCriteria = (
   let result: AnalysisResult[] = [];
   const grouped = groupBy(adjustedDataSet, criteria);
   for (const [group, articleStat] of Object.entries(grouped)) {
-    let OfMetric = sumBy(articleStat, (adjustedDataPoint) => adjustedDataPoint[metricName]);
+    let calculated = 0;
+    if (calculationMethod === "by-sum") {
+      calculated = sumBy(articleStat, (adjustedDataPoint) => adjustedDataPoint[metricName]);
+    } else if (calculationMethod === "by-mean") {
+      calculated = meanBy(articleStat, (adjustedDataPoint) => adjustedDataPoint[metricName]);
+    }
     result.push({
       group,
-      metric: parseFloat(OfMetric.toFixed(2)),
+      metric: parseFloat(calculated.toFixed(2)),
     });
   }
   return result;
@@ -96,6 +103,7 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
 const analyze = (
   data: RawDataPoint[],
   zScore: number,
+  calculationMethod: "by-sum" | "by-mean",
   setCommentsByPublishedTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setReactionsByPublishedTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setCommentsByReadingTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
@@ -108,6 +116,7 @@ const analyze = (
   const reactionsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "positiveReactionsCount", zScore) as RawDataPoint[];
 
   const CommentsByPublishedTimeWithoutCommentsCountOutliers = getSumOfMetricByCriteria(
+    calculationMethod,
     commentsCountOutliersRemoved,
     "commentsCount",
     (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
@@ -115,14 +124,15 @@ const analyze = (
   setCommentsByPublishedTimeWithoutOutliers(CommentsByPublishedTimeWithoutCommentsCountOutliers);
 
   const ReactionsCountByPublishedTimeWithoutCommentsCountOutliers = getSumOfMetricByCriteria(
+    calculationMethod,
     reactionsCountOutliersRemoved,
     "positiveReactionsCount",
     (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
-
   setReactionsByPublishedTimeWithoutOutliers(ReactionsCountByPublishedTimeWithoutCommentsCountOutliers);
 
   const CommentsByReadingTimeWithoutOutliers = getSumOfMetricByCriteria(
+    calculationMethod,
     commentsCountOutliersRemoved,
     "commentsCount",
     (item: RawDataPoint) => item.readingTimeMinutes
@@ -130,6 +140,7 @@ const analyze = (
   setCommentsByReadingTimeWithoutOutliers(CommentsByReadingTimeWithoutOutliers);
 
   const ReactionsByReadingTimeWithoutOutliers = getSumOfMetricByCriteria(
+    calculationMethod,
     reactionsCountOutliersRemoved,
     "positiveReactionsCount",
     (item: RawDataPoint) => item.readingTimeMinutes
@@ -149,6 +160,7 @@ const analyze = (
     });
   });
   const CommentsCountByTagsWithoutOutliers = getSumOfMetricByCriteria(
+    calculationMethod,
     commentsCountBasedOnTags,
     "commentsCount",
     (item: { tag: string; commentsCount: number }) => item.tag
@@ -156,6 +168,7 @@ const analyze = (
   setCommentsByTagsWithOutliers(CommentsCountByTagsWithoutOutliers);
 
   const ReactionsCountByTagsWithoutOutliers = getSumOfMetricByCriteria(
+    calculationMethod,
     reactionsCountBasedOnTags,
     "positiveReactionsCount",
     (item: { tag: string; reactionsCount: number }) => item.tag
@@ -164,6 +177,9 @@ const analyze = (
 };
 
 const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList, zScore }) => {
+  // Calculation method
+  const [calculationMethod, setCalculationMethod] = useState<"by-sum" | "by-mean">("by-sum");
+
   // By published time
   const [commentsByPublishedTimeWithoutOutliers, setCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
   const [reactionsByPublishedTimeWithoutOutliers, setReactionsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
@@ -183,6 +199,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
       analyze(
         data,
         zScore,
+        calculationMethod,
         setCommentsByPublishedTimeWithoutOutliers,
         setReactionsByPublishedTimeWithoutOutliers,
         setCommentsByReadingTimeWithoutOutliers,
@@ -191,10 +208,25 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         setReactionsByTagsWithoutOutliers
       );
     }
-  }, [articleList]);
+  }, [articleList, calculationMethod]);
 
   return (
     <>
+      <FormControl>
+        <FormLabel id="calculation-method">Calculation Method</FormLabel>
+        <RadioGroup
+          row
+          aria-labelledby="calculation-method"
+          name="row-radio-buttons-group"
+          value={calculationMethod}
+          onChange={(event) => {
+            setCalculationMethod(event.target.value as "by-sum" | "by-mean");
+          }}
+        >
+          <FormControlLabel value="by-sum" control={<Radio />} label="By sum" />
+          <FormControlLabel value="by-mean" control={<Radio />} label="By mean" />
+        </RadioGroup>
+      </FormControl>
       <ByPublishedTimeSection
         commentsByPublishedTimeWithoutOutliers={commentsByPublishedTimeWithoutOutliers}
         reactionsByPublishedTimeWithoutOutliers={reactionsByPublishedTimeWithoutOutliers}
