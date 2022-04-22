@@ -6,21 +6,15 @@
 import { useEffect, useState } from "react";
 import type { Dispatch, FC, SetStateAction } from "react";
 
-// MUI library
-import { Grid } from "@mui/material";
-
 // Utilities
 import { format, parseISO } from "date-fns";
-import { groupBy, sortBy, sumBy } from "lodash";
+import { groupBy, sumBy } from "lodash";
 import removeOutLiers from "../../utils/RemoveOutliers";
-import type { CustomizedDataGridProps } from "./visualization/CustomizedDataGrid";
 
 // Components
-import CustomizedHeatMap from "./visualization/CustomizedHeatMap";
-import CustomizedLineChart from "./visualization/CustomizedLineChart";
-import type { GridColDef } from "@mui/x-data-grid";
-import CustomizedDataGrid from "./visualization/CustomizedDataGrid";
-import ByTagsSection from "./ByTagsSection";
+import ByTagsSection from "./sub-section/ByTagsSection";
+import ByPublishedTimeSection from "./sub-section/ByPublishedTimeSection";
+import ByReadingTimeSection from "./sub-section/ByReadingTimeSection";
 
 interface DataVisualizationSectionProps {
   articleList: any;
@@ -40,18 +34,6 @@ interface RawDataPoint {
 export interface AnalysisResult {
   group: string;
   metric: number;
-}
-
-interface NivoheatMapDataByPublishedTimePoint {
-  id: string; // hour
-  data: {
-    x: string; // day of week
-    y: number;
-  }[];
-}
-
-interface NivoLineChartDataPoint extends NivoheatMapDataByPublishedTimePoint {
-  color: string;
 }
 
 /**
@@ -181,78 +163,14 @@ const analyze = (
   setReactionsByTagsWithOutliers(ReactionsCountByTagsWithoutOutliers);
 };
 
-const generateNivoDataFromPublishedTime = (
-  groupedData: AnalysisResult[],
-  setForMetric: Dispatch<SetStateAction<NivoheatMapDataByPublishedTimePoint[] | undefined>>
-) => {
-  const metricData: NivoheatMapDataByPublishedTimePoint[] = [];
-
-  groupedData?.forEach((timeSlot) => {
-    const dayOfWeek = timeSlot.group.split(" ")[0];
-    const hour = timeSlot.group.split(" ")[1];
-    const idExistedInMetricData = metricData.filter((adjustedDataPoint) => adjustedDataPoint.id === hour)[0];
-    if (idExistedInMetricData) {
-      idExistedInMetricData.data.push({
-        x: dayOfWeek,
-        y: timeSlot.metric,
-      });
-    } else {
-      metricData.push({
-        id: hour,
-        data: [
-          {
-            x: dayOfWeek,
-            y: timeSlot.metric,
-          },
-        ],
-      });
-    }
-  });
-  setForMetric(sortBy(metricData, (adjustedDataPoint) => adjustedDataPoint.id));
-};
-
-const generateNivoDataFromReadingTime = (
-  groupedData: AnalysisResult[],
-  legendName: string,
-  setData: Dispatch<SetStateAction<NivoLineChartDataPoint[] | undefined>>
-) => {
-  let data: NivoLineChartDataPoint[] = [];
-  groupedData.forEach((readingTime, index) => {
-    if (index > 0) {
-      data[0].data.push({
-        x: readingTime.group,
-        y: readingTime.metric,
-      });
-    } else {
-      data.push({
-        id: legendName,
-        color: "hsl(132, 70%, 50%)",
-        data: [
-          {
-            x: readingTime.group,
-            y: readingTime.metric,
-          },
-        ],
-      });
-    }
-  });
-  setData(data);
-};
-
 const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList, zScore }) => {
   // By published time
   const [commentsByPublishedTimeWithoutOutliers, setCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
   const [reactionsByPublishedTimeWithoutOutliers, setReactionsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
-  const [heatMapDataByPublishedTimeForCommentsCount, setheatMapDataByPublishedTimeForCommentsCount] =
-    useState<NivoheatMapDataByPublishedTimePoint[]>();
-  const [heatMapDataByPublishedTimeForReactionsCount, setheatMapDataByPublishedTimeForReactionsCount] =
-    useState<NivoheatMapDataByPublishedTimePoint[]>();
 
   // By reading time
   const [commentsByReadingTimeWithoutOutliers, setCommentsByReadingTimeWithoutOutliers] = useState<AnalysisResult[]>();
   const [reactionsByReadingTimeWithoutOutliers, setReactionsByReadingTimeWithoutOutliers] = useState<AnalysisResult[]>();
-  const [lineChartDataByReadingTimeForCommentsCount, setLineChartDataByReadingTimeForCommentsCount] = useState<NivoLineChartDataPoint[]>();
-  const [lineChartDataByReadingTimeForReactionsCount, setLineChartDataByReadingTimeForReactionsCount] = useState<NivoLineChartDataPoint[]>();
 
   // By tags
   const [commentsByTagsWithoutOutliers, setCommentsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
@@ -275,70 +193,18 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
     }
   }, [articleList]);
 
-  // Generate new heatmaps upon changes
-  useEffect(() => {
-    if (commentsByPublishedTimeWithoutOutliers && reactionsByPublishedTimeWithoutOutliers) {
-      generateNivoDataFromPublishedTime(commentsByPublishedTimeWithoutOutliers, setheatMapDataByPublishedTimeForCommentsCount);
-      generateNivoDataFromPublishedTime(reactionsByPublishedTimeWithoutOutliers, setheatMapDataByPublishedTimeForReactionsCount);
-    }
-  }, [commentsByPublishedTimeWithoutOutliers, reactionsByPublishedTimeWithoutOutliers]);
-
-  // Generate new line chart upon changes
-  useEffect(() => {
-    if (commentsByReadingTimeWithoutOutliers && reactionsByReadingTimeWithoutOutliers) {
-      generateNivoDataFromReadingTime(commentsByReadingTimeWithoutOutliers, "Comments count", setLineChartDataByReadingTimeForCommentsCount);
-      generateNivoDataFromReadingTime(reactionsByReadingTimeWithoutOutliers, "Reactions count", setLineChartDataByReadingTimeForReactionsCount);
-    }
-  }, [commentsByReadingTimeWithoutOutliers, reactionsByReadingTimeWithoutOutliers]);
-
   return (
     <>
-      <Grid container component="section">
-        <Grid item xs={12} lg={6}>
-          {heatMapDataByPublishedTimeForCommentsCount ? (
-            <CustomizedHeatMap
-              data={heatMapDataByPublishedTimeForCommentsCount}
-              axisTopLegend="Day of Week"
-              axisLeftLegend="Hour"
-              axisRightLegend="Hour"
-              title={`Comments count by published time (Z-score = ${zScore})`}
-            />
-          ) : null}
-        </Grid>
-
-        <Grid item xs={12} lg={6}>
-          {heatMapDataByPublishedTimeForReactionsCount ? (
-            <CustomizedHeatMap
-              data={heatMapDataByPublishedTimeForReactionsCount}
-              axisTopLegend="Day of Week"
-              axisLeftLegend="Hour"
-              axisRightLegend="Hour"
-              title={`Reactions count by published time (Z-score = ${zScore})`}
-            />
-          ) : null}
-        </Grid>
-
-        <Grid item xs={12} lg={6}>
-          {lineChartDataByReadingTimeForCommentsCount ? (
-            <CustomizedLineChart
-              data={lineChartDataByReadingTimeForCommentsCount}
-              axisLeftLegend="Count"
-              axisBottomLegend="Reading time (minutes)"
-              title={`Comments count by reading time (Z-score = ${zScore})`}
-            />
-          ) : null}
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          {lineChartDataByReadingTimeForReactionsCount ? (
-            <CustomizedLineChart
-              data={lineChartDataByReadingTimeForReactionsCount}
-              axisLeftLegend="Count"
-              axisBottomLegend="Reading time (minutes)"
-              title={`Reactions count by reading time (Z-score = ${zScore})`}
-            />
-          ) : null}
-        </Grid>
-      </Grid>
+      <ByPublishedTimeSection
+        commentsByPublishedTimeWithoutOutliers={commentsByPublishedTimeWithoutOutliers}
+        reactionsByPublishedTimeWithoutOutliers={reactionsByPublishedTimeWithoutOutliers}
+        zScore={zScore}
+      />
+      <ByReadingTimeSection
+        commentsByReadingTimeWithoutOutliers={commentsByReadingTimeWithoutOutliers}
+        reactionsByReadingTimeWithoutOutliers={reactionsByReadingTimeWithoutOutliers}
+        zScore={zScore}
+      />
       <ByTagsSection
         commentsByTagsWithoutOutliers={commentsByTagsWithoutOutliers}
         reactionsByTagsWithoutOutliers={reactionsByTagsWithoutOutliers}

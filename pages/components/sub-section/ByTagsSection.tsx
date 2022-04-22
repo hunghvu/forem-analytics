@@ -13,11 +13,11 @@ import { Paper, Grid } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 
 // Utilities
-import { AnalysisResult } from "./DataVisualizationSection";
-import type { CustomizedDataGridProps } from "./visualization/CustomizedDataGrid";
+import { AnalysisResult } from "../DataVisualizationSection";
+import type { CustomizedDataGridProps } from "../visualization/CustomizedDataGrid";
 
 // Components
-import CustomizedDataGrid from "./visualization/CustomizedDataGrid";
+import CustomizedDataGrid from "../visualization/CustomizedDataGrid";
 
 interface ByTagsSectionProps {
   commentsByTagsWithoutOutliers: AnalysisResult[] | undefined;
@@ -75,6 +75,7 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({ commentsByTagsWithoutOutliers, 
         margin: 20,
         minWidth: "97vw",
       }}
+      component="section"
     >
       <header>
         <h2>Comments and reactions count based on tags (Z-score = {zScore})</h2>
