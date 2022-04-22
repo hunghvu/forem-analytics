@@ -6,6 +6,9 @@
 import { useEffect, useState } from "react";
 import type { Dispatch, FC, SetStateAction } from "react";
 
+// MUI library
+import { Grid, Button, Paper } from "@mui/material";
+
 // Utilities
 import { format, parseISO } from "date-fns";
 import { groupBy, meanBy, sumBy } from "lodash";
@@ -15,7 +18,6 @@ import removeOutLiers from "../../utils/RemoveOutliers";
 import ByTagsSection from "./sub-section/ByTagsSection";
 import ByPublishedTimeSection from "./sub-section/ByPublishedTimeSection";
 import ByReadingTimeSection from "./sub-section/ByReadingTimeSection";
-import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Grid, Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import RadioButtonField from "./inputs/RadioButtonField";
 import TextInputField from "./inputs/TextInputField";
@@ -187,7 +189,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
   } = useForm({
     defaultValues: {
       calculationMethod: "by-sum",
-      zScore: "3.00",
+      zScore: "",
     },
   });
 
@@ -225,60 +227,77 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
     }
   }, [articleList, calculationMethod, zScore]);
 
+  const flexRowCenter = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
   return (
     <>
-      <Grid
-        container
-        direction="row"
-        spacing={4}
-        component="form"
-        onSubmit={handleSubmit((data) => {
-          setCalculationMethod(data.calculationMethod!);
-          setzScore(parseFloat(data.zScore!));
-        })}
-        noValidate
+      <Paper
+        elevation={2}
+        style={{
+          border: "1px",
+          borderRadius: 16,
+          padding: 20,
+          margin: 20,
+          minWidth: "90vw",
+        }}
+        component="fieldset"
       >
-        <Grid item>
-          <RadioButtonField
-            id={"calculation-method"}
-            name={"calculationMethod"}
-            control={control}
-            label={"Calculation Method"}
-            rules={{ required: true }}
-            choices={[
-              { choiceValue: "by-sum", choiceLabel: "By Sum" },
-              { choiceValue: "by-mean", choiceLabel: "By mean" },
-            ]}
-          />
+        <Grid
+          container
+          direction="row"
+          spacing={4}
+          component="form"
+          onSubmit={handleSubmit((data) => {
+            setCalculationMethod(data.calculationMethod!);
+            setzScore(parseFloat(data.zScore!));
+          })}
+          noValidate
+        >
+          <Grid item xs={12} md={6} style={flexRowCenter}>
+            <RadioButtonField
+              id={"calculation-method"}
+              name={"calculationMethod"}
+              control={control}
+              label={"Calculation Method"}
+              rules={{ required: true }}
+              choices={[
+                { choiceValue: "by-sum", choiceLabel: "By Sum" },
+                { choiceValue: "by-mean", choiceLabel: "By mean" },
+              ]}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextInputField
+              name={"zScore"}
+              control={control}
+              label={"Z-score (0.00 - 3.00)"}
+              errors={errors}
+              rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
+            />
+          </Grid>
+          <Grid item xs={6} style={flexRowCenter}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                reset({
+                  calculationMethod: "by-sum",
+                  zScore: "",
+                });
+              }}
+            >
+              Reset
+            </Button>
+          </Grid>
+          <Grid item xs={6} style={flexRowCenter}>
+            <Button variant="outlined" type="submit">
+              Calculate
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item>
-          <TextInputField
-            name={"zScore"}
-            control={control}
-            label={"Z-score (0.00 - 3.00)"}
-            errors={errors}
-            rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
-          />
-        </Grid>
-        <Grid item xs={6}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              reset({
-                calculationMethod: "by-sum",
-                zScore: "3.00",
-              });
-            }}
-          >
-            Reset
-          </Button>
-        </Grid>
-        <Grid item xs={6}>
-          <Button variant="outlined" type="submit">
-            Submit
-          </Button>
-        </Grid>
-      </Grid>
+      </Paper>
 
       <ByPublishedTimeSection
         commentsByPublishedTimeWithoutOutliers={commentsByPublishedTimeWithoutOutliers}

@@ -160,7 +160,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         })}
         noValidate
       >
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid item xs={12} md={4}>
           <AutocompleteField
             name={"community"}
             control={control}
@@ -169,7 +169,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
             errors={errors}
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid item xs={12} md={4}>
           <TextInputField
             name={"numberOfPages"}
             control={control}
@@ -180,7 +180,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
             rules={{ required: true, pattern: /^[1-9]{1}[0-9]*$/ }} // min is 1
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={3}>
+        <Grid item xs={12} md={4}>
           <TextInputField
             name={"articlesPerPage"}
             control={control}
@@ -206,7 +206,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         </Grid>
         <Grid item xs={6} style={flexRowCenter}>
           <Button variant="outlined" type="submit">
-            Submit
+            Fetch articles
           </Button>
         </Grid>
       </Grid>
