@@ -18,14 +18,12 @@ import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles
 
 interface QueryOptionsSectionProps {
   setArticleList: Dispatch<SetStateAction<any>>;
-  setzScore: Dispatch<SetStateAction<number>>;
 }
 
 interface FormInputs {
   community: { label: string; communityUrl: string; iconUrl: string } | null;
   numberOfPages: string | null;
   articlesPerPage: string | null;
-  zScore: string | null;
 }
 
 const availableCommunities = [
@@ -116,7 +114,7 @@ const availableCommunities = [
   },
 ];
 
-const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, setzScore }) => {
+const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) => {
   const {
     handleSubmit,
     control,
@@ -127,7 +125,6 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, set
       community: null,
       numberOfPages: "",
       articlesPerPage: "",
-      zScore: "",
     },
   });
 
@@ -146,7 +143,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, set
         margin: 20,
         minWidth: "90vw",
       }}
-      component="section"
+      component="fieldset"
     >
       <Grid
         container
@@ -159,7 +156,6 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, set
             data!.numberOfPages!,
             data!.articlesPerPage!
           );
-          setzScore(parseFloat(data.zScore!));
           setArticleList(articleList);
         })}
         noValidate
@@ -194,15 +190,6 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, set
             rules={{ required: true, pattern: /^[3-9]{1}[0-9]{1}$/ }} // range is 100 - 1000
           />
         </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <TextInputField
-            name={"zScore"}
-            control={control}
-            label={"Z-score (0.00 - 3.00)"}
-            errors={errors}
-            rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
-          />
-        </Grid>
         <Grid item xs={6} style={flexRowCenter}>
           <Button
             variant="outlined"
@@ -211,7 +198,6 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList, set
                 community: null,
                 numberOfPages: "",
                 articlesPerPage: "",
-                zScore: "",
               });
             }}
           >
