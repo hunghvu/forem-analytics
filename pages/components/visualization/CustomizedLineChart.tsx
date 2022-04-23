@@ -4,7 +4,7 @@
  * Provide customizable line chart.
  */
 
-// ResponsiveLine is currently broken in @nivo 0.79.0: https://github.com/plouc/nivo/issues/1889
+// ResponsiveLine SSR is currently broken in @nivo 0.79.0: https://github.com/plouc/nivo/issues/1889
 
 // React
 import { FC } from "react";
@@ -13,7 +13,7 @@ import { FC } from "react";
 import { Paper } from "@mui/material";
 
 // Components
-import { Line } from "@nivo/line";
+import { ResponsiveLine } from "@nivo/line";
 
 interface CustomizedLineChartProps {
   data: {
@@ -40,15 +40,16 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         border: "1px",
         borderRadius: 16,
         margin: 20,
+        height: 400,
       }}
       component="section"
     >
       <header>
         <h2>{title}</h2>
       </header>
-      <Line
+      <ResponsiveLine
         data={data}
-        margin={{ top: 60, right: 90, bottom: 60, left: 90 }}
+        margin={{ top: 30, right: 30, bottom: 160, left: 80 }}
         axisBottom={{
           legend: axisBottomLegend,
           legendOffset: 35,
@@ -67,7 +68,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         useMesh={true}
         legends={[
           {
-            anchor: "top-left",
+            anchor: "top",
             direction: "column",
             justify: false,
             translateX: 20,
@@ -80,8 +81,6 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
             symbolBorderColor: "rgba(0, 0, 0, .5)",
           },
         ]}
-        height={400}
-        width={700}
       />
     </Paper>
   );

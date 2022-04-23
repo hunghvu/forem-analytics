@@ -4,7 +4,7 @@
  * Provide customizable heatmap.
  */
 
-// ResponsiveHeatMap is currently broken in @nivo 0.79.0: https://github.com/plouc/nivo/issues/1889
+// ResponsiveHeatMap SSR is currently broken in @nivo 0.79.0: https://github.com/plouc/nivo/issues/1889
 
 // React
 import type { FC } from "react";
@@ -13,7 +13,7 @@ import type { FC } from "react";
 import { Paper } from "@mui/material";
 
 // Components
-import { HeatMap } from "@nivo/heatmap";
+import { ResponsiveHeatMap } from "@nivo/heatmap";
 
 interface CustomizedHeatMapProps {
   data: {
@@ -41,15 +41,16 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         border: "1px",
         borderRadius: 16,
         margin: 20,
+        height: 500,
       }}
       component="section"
     >
       <header>
         <h2>{title}</h2>
       </header>
-      <HeatMap
+      <ResponsiveHeatMap
         data={data}
-        margin={{ top: 60, right: 90, bottom: 60, left: 90 }}
+        margin={{ top: 60, right: 70, bottom: 170, left: 70 }}
         axisTop={{
           legend: axisTopLegend,
           legendPosition: "middle",
@@ -75,14 +76,12 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
             anchor: "bottom",
             translateX: 0,
             translateY: 30,
-            length: 400,
+            length: 250,
             thickness: 8,
             tickSize: 12,
             title: "Value →",
           },
         ]}
-        height={500}
-        width={700}
       />
     </Paper>
   );
