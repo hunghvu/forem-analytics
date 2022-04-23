@@ -11,7 +11,8 @@ import { Grid, Button, Paper } from "@mui/material";
 
 // Utilities
 import { format, parseISO } from "date-fns";
-import { groupBy, meanBy, sumBy } from "lodash";
+import { countBy, groupBy, meanBy, sumBy } from "lodash";
+import type { Dictionary } from "lodash";
 import removeOutLiers from "../../utils/RemoveOutliers";
 
 // Components
@@ -51,15 +52,26 @@ export interface AnalysisResult {
  * @param criteria To perform "group by"
  * @returns  comments and reactions
  */
-const getSumOfMetricByCriteria = (
+const calculationByCriteria = (
   calculationMethod: "by-sum" | "by-mean",
+  minSampleSize: number,
   adjustedDataSet: any[],
   metricName: "commentsCount" | "positiveReactionsCount",
   criteria: any
 ): AnalysisResult[] => {
   let result: AnalysisResult[] = [];
+  let counted = countBy(adjustedDataSet, criteria);
   const grouped = groupBy(adjustedDataSet, criteria);
-  for (const [group, articleStat] of Object.entries(grouped)) {
+
+  // Remove some records if sample size is not significant
+  const sampleSizeAdjustedGrouped: Dictionary<any[]> = {};
+  Object.keys(counted).forEach((key) => {
+    if (counted[key] >= minSampleSize) {
+      sampleSizeAdjustedGrouped[key] = grouped[key];
+    }
+  });
+
+  for (const [group, articleStat] of Object.entries(sampleSizeAdjustedGrouped)) {
     let calculated = 0;
     if (calculationMethod === "by-sum") {
       calculated = sumBy(articleStat, (adjustedDataPoint) => adjustedDataPoint[metricName]);
@@ -107,6 +119,7 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
 const analyze = (
   data: RawDataPoint[],
   zScore: number,
+  minSampleSize: number,
   calculationMethod: "by-sum" | "by-mean",
   setCommentsByPublishedTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setReactionsByPublishedTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
@@ -119,32 +132,36 @@ const analyze = (
   const commentsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "commentsCount", zScore) as RawDataPoint[];
   const reactionsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "positiveReactionsCount", zScore) as RawDataPoint[];
 
-  const CommentsByPublishedTimeWithoutCommentsCountOutliers = getSumOfMetricByCriteria(
+  const CommentsByPublishedTimeWithoutCommentsCountOutliers = calculationByCriteria(
     calculationMethod,
+    minSampleSize,
     commentsCountOutliersRemoved,
     "commentsCount",
     (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
   setCommentsByPublishedTimeWithoutOutliers(CommentsByPublishedTimeWithoutCommentsCountOutliers);
 
-  const ReactionsCountByPublishedTimeWithoutCommentsCountOutliers = getSumOfMetricByCriteria(
+  const ReactionsCountByPublishedTimeWithoutCommentsCountOutliers = calculationByCriteria(
     calculationMethod,
+    minSampleSize,
     reactionsCountOutliersRemoved,
     "positiveReactionsCount",
     (item: RawDataPoint) => `${item.publishedAtDayOfWeek} ${item.publishedAtHour}`
   );
   setReactionsByPublishedTimeWithoutOutliers(ReactionsCountByPublishedTimeWithoutCommentsCountOutliers);
 
-  const CommentsByReadingTimeWithoutOutliers = getSumOfMetricByCriteria(
+  const CommentsByReadingTimeWithoutOutliers = calculationByCriteria(
     calculationMethod,
+    minSampleSize,
     commentsCountOutliersRemoved,
     "commentsCount",
     (item: RawDataPoint) => item.readingTimeMinutes
   );
   setCommentsByReadingTimeWithoutOutliers(CommentsByReadingTimeWithoutOutliers);
 
-  const ReactionsByReadingTimeWithoutOutliers = getSumOfMetricByCriteria(
+  const ReactionsByReadingTimeWithoutOutliers = calculationByCriteria(
     calculationMethod,
+    minSampleSize,
     reactionsCountOutliersRemoved,
     "positiveReactionsCount",
     (item: RawDataPoint) => item.readingTimeMinutes
@@ -163,16 +180,18 @@ const analyze = (
       reactionsCountBasedOnTags.push({ tag, positiveReactionsCount: adjustedDataPoint.positiveReactionsCount });
     });
   });
-  const CommentsCountByTagsWithoutOutliers = getSumOfMetricByCriteria(
+  const CommentsCountByTagsWithoutOutliers = calculationByCriteria(
     calculationMethod,
+    minSampleSize,
     commentsCountBasedOnTags,
     "commentsCount",
     (item: { tag: string; commentsCount: number }) => item.tag
   );
   setCommentsByTagsWithOutliers(CommentsCountByTagsWithoutOutliers);
 
-  const ReactionsCountByTagsWithoutOutliers = getSumOfMetricByCriteria(
+  const ReactionsCountByTagsWithoutOutliers = calculationByCriteria(
     calculationMethod,
+    minSampleSize,
     reactionsCountBasedOnTags,
     "positiveReactionsCount",
     (item: { tag: string; reactionsCount: number }) => item.tag
@@ -190,11 +209,13 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
     defaultValues: {
       calculationMethod: "by-sum",
       zScore: "",
+      minSampleSize: "",
     },
   });
 
   const [calculationMethod, setCalculationMethod] = useState("by-sum");
   const [zScore, setzScore] = useState<number>(3);
+  const [minSampleSize, setMinSampleSize] = useState<number>(0);
 
   // By published time
   const [commentsByPublishedTimeWithoutOutliers, setCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
@@ -216,6 +237,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
       analyze(
         data,
         zScore,
+        minSampleSize,
         calculationMethod as "by-sum" | "by-mean",
         setCommentsByPublishedTimeWithoutOutliers,
         setReactionsByPublishedTimeWithoutOutliers,
@@ -225,7 +247,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         setReactionsByTagsWithoutOutliers
       );
     }
-  }, [articleList, calculationMethod, zScore]);
+  }, [articleList, calculationMethod, zScore, minSampleSize]);
 
   const flexRowCenter = {
     display: "flex",
@@ -253,10 +275,11 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
           onSubmit={handleSubmit((data) => {
             setCalculationMethod(data.calculationMethod!);
             setzScore(parseFloat(data.zScore!));
+            setMinSampleSize(parseFloat(data.minSampleSize!));
           })}
           noValidate
         >
-          <Grid item xs={12} md={6} style={flexRowCenter}>
+          <Grid item xs={12} md={4} style={flexRowCenter}>
             <RadioButtonField
               id={"calculation-method"}
               name={"calculationMethod"}
@@ -269,13 +292,22 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
               ]}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <TextInputField
               name={"zScore"}
               control={control}
               label={"Z-score (0.00 - 3.00)"}
               errors={errors}
               rules={{ required: true, pattern: /^3.00$|^[0-2]{1}[.][0-9]{2}$/ }} // range is 0.00 - 3.00
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextInputField
+              name={"minSampleSize"}
+              control={control}
+              label={"Minimal sample size (>= 0)"}
+              errors={errors}
+              rules={{ required: true, pattern: /[0-9]*/ }} // range is 0.00 - 3.00
             />
           </Grid>
           <Grid item xs={6} style={flexRowCenter}>
@@ -285,6 +317,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
                 reset({
                   calculationMethod: "by-sum",
                   zScore: "",
+                  minSampleSize: "",
                 });
               }}
             >
@@ -303,16 +336,19 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         commentsByPublishedTimeWithoutOutliers={commentsByPublishedTimeWithoutOutliers}
         reactionsByPublishedTimeWithoutOutliers={reactionsByPublishedTimeWithoutOutliers}
         zScore={zScore}
+        minSampleSize={minSampleSize}
       />
       <ByReadingTimeSection
         commentsByReadingTimeWithoutOutliers={commentsByReadingTimeWithoutOutliers}
         reactionsByReadingTimeWithoutOutliers={reactionsByReadingTimeWithoutOutliers}
         zScore={zScore}
+        minSampleSize={minSampleSize}
       />
       <ByTagsSection
         commentsByTagsWithoutOutliers={commentsByTagsWithoutOutliers}
         reactionsByTagsWithoutOutliers={reactionsByTagsWithoutOutliers}
         zScore={zScore}
+        minSampleSize={minSampleSize}
       />
     </>
   );

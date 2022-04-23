@@ -21,6 +21,7 @@ interface ByReadingTimeSectionProps {
   commentsByReadingTimeWithoutOutliers: AnalysisResult[] | undefined;
   reactionsByReadingTimeWithoutOutliers: AnalysisResult[] | undefined;
   zScore: number;
+  minSampleSize: number;
 }
 
 interface NivoLineChartDataPoint {
@@ -64,6 +65,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
   commentsByReadingTimeWithoutOutliers,
   reactionsByReadingTimeWithoutOutliers,
   zScore,
+  minSampleSize,
 }) => {
   const [lineChartDataByReadingTimeForCommentsCount, setLineChartDataByReadingTimeForCommentsCount] = useState<NivoLineChartDataPoint[]>();
   const [lineChartDataByReadingTimeForReactionsCount, setLineChartDataByReadingTimeForReactionsCount] = useState<NivoLineChartDataPoint[]>();
@@ -83,7 +85,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             data={lineChartDataByReadingTimeForCommentsCount}
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
-            title={`Comments count by reading time (Z-score = ${zScore})`}
+            title={`Comments count by reading time (Z-score = ${zScore}, Min n = ${minSampleSize})`}
           />
         ) : null}
       </Grid>
@@ -93,7 +95,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             data={lineChartDataByReadingTimeForReactionsCount}
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
-            title={`Reactions count by reading time (Z-score = ${zScore})`}
+            title={`Reactions count by reading time (Z-score = ${zScore}, Min n = ${minSampleSize})`}
           />
         ) : null}
       </Grid>

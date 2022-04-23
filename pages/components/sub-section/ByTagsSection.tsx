@@ -23,6 +23,7 @@ interface ByTagsSectionProps {
   commentsByTagsWithoutOutliers: AnalysisResult[] | undefined;
   reactionsByTagsWithoutOutliers: AnalysisResult[] | undefined;
   zScore: number;
+  minSampleSize: number;
 }
 
 const generateDataGridFromTags = (
@@ -51,15 +52,15 @@ const generateDataGridFromTags = (
   });
 };
 
-const ByTagsSection: FC<ByTagsSectionProps> = ({ commentsByTagsWithoutOutliers, reactionsByTagsWithoutOutliers, zScore }) => {
+const ByTagsSection: FC<ByTagsSectionProps> = ({ commentsByTagsWithoutOutliers, reactionsByTagsWithoutOutliers, zScore, minSampleSize }) => {
   const [dataByTagsForCommentsCount, setDataByTagsForCommentsCount] = useState<CustomizedDataGridProps>();
   const [dataByTagsForReactionsCount, setDataByTagsForReactionstsCount] = useState<CustomizedDataGridProps>();
 
   // Generate new tables upon changes
   useEffect(() => {
     if (commentsByTagsWithoutOutliers && reactionsByTagsWithoutOutliers) {
-      generateDataGridFromTags(commentsByTagsWithoutOutliers, `Comments count (Z-score = ${zScore})`, setDataByTagsForCommentsCount);
-      generateDataGridFromTags(reactionsByTagsWithoutOutliers, `Reactions count (Z-score = ${zScore})`, setDataByTagsForReactionstsCount);
+      generateDataGridFromTags(commentsByTagsWithoutOutliers, `Comments count`, setDataByTagsForCommentsCount);
+      generateDataGridFromTags(reactionsByTagsWithoutOutliers, `Reactions count`, setDataByTagsForReactionstsCount);
     }
   }, [commentsByTagsWithoutOutliers, reactionsByTagsWithoutOutliers]);
 
@@ -78,7 +79,9 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({ commentsByTagsWithoutOutliers, 
       component="section"
     >
       <header>
-        <h2>Comments and reactions count based on tags (Z-score = {zScore})</h2>
+        <h2>
+          Comments and reactions count based on tags (Z-score = {zScore}, Min n = {minSampleSize})
+        </h2>
       </header>
       <Grid
         container
