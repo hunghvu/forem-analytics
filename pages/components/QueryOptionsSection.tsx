@@ -139,8 +139,6 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
     <Paper
       elevation={2}
       style={{
-        border: "1px",
-        borderRadius: 16,
         padding: 20,
         margin: 20,
         minWidth: "90vw",

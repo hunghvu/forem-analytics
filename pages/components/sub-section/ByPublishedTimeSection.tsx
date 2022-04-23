@@ -93,7 +93,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title={"Comments count by published time"}
+            title={"Comments count by published time 💬"}
             subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup}`}
           />
         ) : null}
@@ -106,7 +106,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title={"Reactions count by published time"}
+            title={"Reactions count by published time ❤️🦄🔖"}
             subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup}`}
           />
         ) : null}

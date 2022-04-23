@@ -78,8 +78,6 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        border: "1px",
-        borderRadius: 16,
         margin: 20,
         minWidth: "97vw",
       }}
@@ -93,7 +91,7 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
           alignItems: "center",
         }}
       >
-        <h2>Comments and reactions count based on tags</h2>
+        <h2>Comments and reactions count based on tags 💬❤️🦄🔖</h2>
         <h3>
           Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize}
         </h3>

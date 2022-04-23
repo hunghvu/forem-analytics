@@ -39,8 +39,6 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        border: "1px",
-        borderRadius: 16,
         margin: 20,
         height: 700,
       }}
@@ -59,7 +57,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
       </header>
       <ResponsiveHeatMapCanvas
         data={data}
-        margin={{ top: 60, right: 70, bottom: 250, left: 70 }}
+        margin={{ top: 60, right: 70, bottom: 280, left: 70 }}
         axisTop={{
           legend: axisTopLegend,
           legendPosition: "middle",

@@ -87,7 +87,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             data={lineChartDataByReadingTimeForCommentsCount}
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
-            title={`Comments count by reading time`}
+            title={`Comments count by reading time 💬`}
             subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup}`}
           />
         ) : null}
@@ -98,7 +98,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             data={lineChartDataByReadingTimeForReactionsCount}
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
-            title={`Reactions count by reading time`}
+            title={`Reactions count by reading time ❤️🦄🔖`}
             subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup}`}
           />
         ) : null}

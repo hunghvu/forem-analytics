@@ -258,8 +258,6 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
       <Paper
         elevation={2}
         style={{
-          border: "1px",
-          borderRadius: 16,
           padding: 20,
           margin: 20,
           minWidth: "90vw",
@@ -304,7 +302,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
             <TextInputField
               name={"minSampleSize"}
               control={control}
-              label={"Minimal sample size (>= 0)"}
+              label={"Minimal sample size per group (>= 0)"}
               errors={errors}
               rules={{ required: true, pattern: /[0-9]*/ }} // range is 0.00 - 3.00
             />
