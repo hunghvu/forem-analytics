@@ -31,7 +31,6 @@ interface RawDataPoint {
   tagList: string[];
   commentsCount: number;
   positiveReactionsCount: number;
-  publicReactionsCount: number; // Unused for now
   publishedAtHour: string;
   publishedAtDayOfWeek: string;
   readingTimeMinutes: number;
@@ -102,7 +101,6 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
         tagList: article["tag_list"],
         commentsCount: article["comments_count"],
         positiveReactionsCount: article["positive_reactions_count"],
-        publicReactionsCount: article["public_reactions_count"], // Unused for now
         publishedAtHour,
         publishedAtDayOfWeek,
         readingTimeMinutes: article["reading_time_minutes"],
@@ -110,7 +108,7 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
       data.push(rawDataPoint);
       articlesPerPage += 1;
     }
-    articlesPerPage = 1;
+    articlesPerPage = 0;
     numberOfPages += 1;
   }
   return data;
@@ -215,7 +213,8 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
 
   const [calculationMethod, setCalculationMethod] = useState("by-sum");
   const [zScore, setzScore] = useState<number>(3);
-  const [minSampleSize, setMinSampleSize] = useState<number>(0);
+  const [minSampleSizePerGroup, setMinSampleSize] = useState<number>(0);
+  const [totalSampleSize, setTotalSampleSize] = useState<number>(0);
 
   // By published time
   const [commentsByPublishedTimeWithoutOutliers, setCommentsByPublishedTimeWithoutOutliers] = useState<AnalysisResult[]>();
@@ -233,11 +232,11 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
   useEffect(() => {
     if (articleList && articleList.length > 0) {
       const data = prepareData(articleList);
-
+      setTotalSampleSize(data.length);
       analyze(
         data,
         zScore,
-        minSampleSize,
+        minSampleSizePerGroup,
         calculationMethod as "by-sum" | "by-mean",
         setCommentsByPublishedTimeWithoutOutliers,
         setReactionsByPublishedTimeWithoutOutliers,
@@ -247,7 +246,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         setReactionsByTagsWithoutOutliers
       );
     }
-  }, [articleList, calculationMethod, zScore, minSampleSize]);
+  }, [articleList, calculationMethod, zScore, minSampleSizePerGroup]);
 
   const flexRowCenter = {
     display: "flex",
@@ -336,19 +335,22 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         commentsByPublishedTimeWithoutOutliers={commentsByPublishedTimeWithoutOutliers}
         reactionsByPublishedTimeWithoutOutliers={reactionsByPublishedTimeWithoutOutliers}
         zScore={zScore}
-        minSampleSize={minSampleSize}
+        minSampleSizePerGroup={minSampleSizePerGroup}
+        totalSampleSize={totalSampleSize}
       />
       <ByReadingTimeSection
         commentsByReadingTimeWithoutOutliers={commentsByReadingTimeWithoutOutliers}
         reactionsByReadingTimeWithoutOutliers={reactionsByReadingTimeWithoutOutliers}
         zScore={zScore}
-        minSampleSize={minSampleSize}
+        minSampleSizePerGroup={minSampleSizePerGroup}
+        totalSampleSize={totalSampleSize}
       />
       <ByTagsSection
         commentsByTagsWithoutOutliers={commentsByTagsWithoutOutliers}
         reactionsByTagsWithoutOutliers={reactionsByTagsWithoutOutliers}
         zScore={zScore}
-        minSampleSize={minSampleSize}
+        minSampleSize={minSampleSizePerGroup}
+        totalSampleSize={totalSampleSize}
       />
     </>
   );

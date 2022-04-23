@@ -22,7 +22,8 @@ interface ByPublishedTimeSectionProps {
   commentsByPublishedTimeWithoutOutliers: AnalysisResult[] | undefined;
   reactionsByPublishedTimeWithoutOutliers: AnalysisResult[] | undefined;
   zScore: number;
-  minSampleSize: number;
+  minSampleSizePerGroup: number;
+  totalSampleSize: number;
 }
 
 interface NivoheatMapDataByPublishedTimePoint {
@@ -67,7 +68,8 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
   commentsByPublishedTimeWithoutOutliers,
   reactionsByPublishedTimeWithoutOutliers,
   zScore,
-  minSampleSize,
+  minSampleSizePerGroup,
+  totalSampleSize,
 }) => {
   const [heatMapDataByPublishedTimeForCommentsCount, setheatMapDataByPublishedTimeForCommentsCount] =
     useState<NivoheatMapDataByPublishedTimePoint[]>();
@@ -91,7 +93,8 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title={`Comments count by published time (Z-score = ${zScore}, Min n = ${minSampleSize})`}
+            title={"Comments count by published time"}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup}`}
           />
         ) : null}
       </Grid>
@@ -103,7 +106,8 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title={`Reactions count by published time (Z-score = ${zScore}, Min n = ${minSampleSize})`}
+            title={"Reactions count by published time"}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup}`}
           />
         ) : null}
       </Grid>

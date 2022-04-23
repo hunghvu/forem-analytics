@@ -24,6 +24,7 @@ interface ByTagsSectionProps {
   reactionsByTagsWithoutOutliers: AnalysisResult[] | undefined;
   zScore: number;
   minSampleSize: number;
+  totalSampleSize: number;
 }
 
 const generateDataGridFromTags = (
@@ -52,7 +53,13 @@ const generateDataGridFromTags = (
   });
 };
 
-const ByTagsSection: FC<ByTagsSectionProps> = ({ commentsByTagsWithoutOutliers, reactionsByTagsWithoutOutliers, zScore, minSampleSize }) => {
+const ByTagsSection: FC<ByTagsSectionProps> = ({
+  commentsByTagsWithoutOutliers,
+  reactionsByTagsWithoutOutliers,
+  zScore,
+  minSampleSize,
+  totalSampleSize,
+}) => {
   const [dataByTagsForCommentsCount, setDataByTagsForCommentsCount] = useState<CustomizedDataGridProps>();
   const [dataByTagsForReactionsCount, setDataByTagsForReactionstsCount] = useState<CustomizedDataGridProps>();
 
@@ -78,10 +85,18 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({ commentsByTagsWithoutOutliers, 
       }}
       component="section"
     >
-      <header>
-        <h2>
-          Comments and reactions count based on tags (Z-score = {zScore}, Min n = {minSampleSize})
-        </h2>
+      <header
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h2>Comments and reactions count based on tags</h2>
+        <h3>
+          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize}
+        </h3>
       </header>
       <Grid
         container

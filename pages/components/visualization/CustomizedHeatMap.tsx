@@ -27,9 +27,10 @@ interface CustomizedHeatMapProps {
   axisLeftLegend: string;
   axisRightLegend: string;
   title: string;
+  subtitle?: string;
 }
 
-const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, axisLeftLegend, axisRightLegend, title }) => {
+const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, axisLeftLegend, axisRightLegend, title, subtitle }) => {
   return (
     <Paper
       elevation={2}
@@ -41,16 +42,24 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         border: "1px",
         borderRadius: 16,
         margin: 20,
-        height: 500,
+        height: 700,
       }}
       component="section"
     >
-      <header>
+      <header
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <h2>{title}</h2>
+        <h3>{subtitle}</h3>
       </header>
       <ResponsiveHeatMap
         data={data}
-        margin={{ top: 60, right: 70, bottom: 170, left: 70 }}
+        margin={{ top: 60, right: 70, bottom: 250, left: 70 }}
         axisTop={{
           legend: axisTopLegend,
           legendPosition: "middle",

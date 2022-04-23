@@ -26,9 +26,10 @@ interface CustomizedLineChartProps {
   axisLeftLegend: string;
   axisBottomLegend: string;
   title: string;
+  subtitle?: string;
 }
 
-const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegend, axisBottomLegend, title }) => {
+const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegend, axisBottomLegend, title, subtitle }) => {
   return (
     <Paper
       elevation={2}
@@ -40,16 +41,24 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         border: "1px",
         borderRadius: 16,
         margin: 20,
-        height: 400,
+        height: 500,
       }}
       component="section"
     >
-      <header>
+      <header
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <h2>{title}</h2>
+        <h3>{subtitle}</h3>
       </header>
       <ResponsiveLine
         data={data}
-        margin={{ top: 30, right: 30, bottom: 160, left: 80 }}
+        margin={{ top: 30, right: 30, bottom: 200, left: 80 }}
         axisBottom={{
           legend: axisBottomLegend,
           legendOffset: 35,
