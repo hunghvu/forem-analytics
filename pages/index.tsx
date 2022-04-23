@@ -42,7 +42,7 @@ const Home: NextPage = (props: any) => {
         }}
       >
         <Box component="header" style={{ marginTop: 60, marginBottom: 70 }}>
-          <h1 style={{ fontFamily: "Segoe UI Semibold", fontSize: "36px", fontWeight: 500 }}>
+          <h1>
             Stats for "
             <a href="https://www.forem.com/" style={{ color: theme.palette.primary.main }}>
               Forem-based communities

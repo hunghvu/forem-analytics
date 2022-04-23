@@ -6,8 +6,11 @@
 import { useState } from "react";
 import type { Dispatch, FC, SetStateAction } from "react";
 
+// Next
+import Image from "next/image";
+
 // MUI library
-import { Button, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 
 // Utilities
 import { useForm } from "react-hook-form";
@@ -27,7 +30,13 @@ interface FormInputs {
   articlesPerPage: string | null;
 }
 
-const availableCommunities = [
+interface Community {
+  label: string;
+  communityUrl: string;
+  iconUrl: string;
+}
+
+const availableCommunities: Community[] = [
   {
     label: "Dev",
     communityUrl: "https://dev.to/",
@@ -116,7 +125,11 @@ const availableCommunities = [
 ];
 
 const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) => {
-  const [chosenCommunity, setChosenCommunity] = useState("Dev");
+  const [chosenCommunity, setChosenCommunity] = useState<Community>({
+    label: "Dev",
+    communityUrl: "https://dev.to/",
+    iconUrl: "/dev.svg",
+  });
   const {
     handleSubmit,
     control,
@@ -151,7 +164,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         spacing={4}
         component="form"
         onSubmit={handleSubmit(async (data) => {
-          setChosenCommunity(data.community!.label!);
+          setChosenCommunity(data.community!);
           const articleList = await fetchPublishedArticlesSortedByPublishDate(
             data.community!.communityUrl!,
             data!.numberOfPages!,
@@ -164,7 +177,12 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         <Grid item xs={12}>
           <header style={flexRowCenter}>
             <h2>
-              You are watching <strong>{chosenCommunity}</strong> stats!
+              <span style={{ marginRight: 6 }}>You are watching</span>
+              &#60;
+              <Image src={chosenCommunity.iconUrl} alt={chosenCommunity.label} width={20} height={20} />
+              {chosenCommunity.label}
+              &#62;
+              <span style={{ marginLeft: 6 }}>stats!</span>
             </h2>
           </header>
         </Grid>

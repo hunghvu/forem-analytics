@@ -92,9 +92,9 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
         }}
       >
         <h2>Comments and reactions count based on tags 💬❤️🦄🔖</h2>
-        <h3>
+        <p>
           Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize}
-        </h3>
+        </p>
       </header>
       <Grid
         container

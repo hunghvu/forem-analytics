@@ -52,11 +52,11 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         }}
       >
         <h2>{title}</h2>
-        <h3>{subtitle}</h3>
+        <p>{subtitle}</p>
       </header>
       <ResponsiveLineCanvas
         data={data}
-        margin={{ top: 30, right: 30, bottom: 280, left: 80 }}
+        margin={{ top: 30, right: 15, bottom: 260, left: 60 }}
         axisBottom={{
           legend: axisBottomLegend,
           legendOffset: 35,
@@ -64,7 +64,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         }}
         axisLeft={{
           legend: axisLeftLegend,
-          legendOffset: -50,
+          legendOffset: -40,
           legendPosition: "middle",
         }}
         pointSize={10}

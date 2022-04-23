@@ -53,7 +53,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         }}
       >
         <h2>{title}</h2>
-        <h3>{subtitle}</h3>
+        <p>{subtitle}</p>
       </header>
       <ResponsiveHeatMapCanvas
         data={data}

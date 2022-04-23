@@ -1,5 +1,5 @@
 // CSS
-// import "../styles/globals.css";
+import "../styles/globals.css";
 
 // Next
 import type { AppProps } from "next/app";
@@ -10,6 +10,15 @@ import type { ThemeOptions } from "@mui/material";
 
 const themeOptions: ThemeOptions = responsiveFontSizes(
   createTheme({
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            minWidth: 140,
+          },
+        },
+      },
+    },
     palette: {
       primary: {
         main: "#3b49df",

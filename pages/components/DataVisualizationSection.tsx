@@ -276,6 +276,11 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
           })}
           noValidate
         >
+          <Grid item xs={12}>
+            <header>
+              <h2>Configuration ⚙️</h2>
+            </header>
+          </Grid>
           <Grid item xs={12} md={4} style={flexRowCenter}>
             <RadioButtonField
               id={"calculation-method"}
