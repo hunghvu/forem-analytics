@@ -3,6 +3,7 @@
  */
 
 // React
+import { useState } from "react";
 import type { Dispatch, FC, SetStateAction } from "react";
 
 // MUI library
@@ -115,6 +116,7 @@ const availableCommunities = [
 ];
 
 const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) => {
+  const [chosenCommunity, setChosenCommunity] = useState("Dev");
   const {
     handleSubmit,
     control,
@@ -143,7 +145,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         margin: 20,
         minWidth: "90vw",
       }}
-      component="fieldset"
+      component="section"
     >
       <Grid
         container
@@ -151,6 +153,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         spacing={4}
         component="form"
         onSubmit={handleSubmit(async (data) => {
+          setChosenCommunity(data.community!.label!);
           const articleList = await fetchPublishedArticlesSortedByPublishDate(
             data.community!.communityUrl!,
             data!.numberOfPages!,
@@ -160,6 +163,13 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         })}
         noValidate
       >
+        <Grid item xs={12}>
+          <header style={flexRowCenter}>
+            <h2>
+              You are watching <strong>{chosenCommunity}</strong> stats!
+            </h2>
+          </header>
+        </Grid>
         <Grid item xs={12} md={4}>
           <AutocompleteField
             name={"community"}

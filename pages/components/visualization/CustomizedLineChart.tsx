@@ -70,9 +70,9 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
           legendPosition: "middle",
         }}
         pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor" }}
+        colors={{
+          scheme: "category10",
+        }}
         legends={[
           {
             anchor: "top",

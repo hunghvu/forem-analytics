@@ -264,7 +264,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
           margin: 20,
           minWidth: "90vw",
         }}
-        component="fieldset"
+        component="section"
       >
         <Grid
           container
