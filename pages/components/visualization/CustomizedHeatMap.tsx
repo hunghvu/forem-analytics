@@ -13,7 +13,7 @@ import type { FC } from "react";
 import { Paper } from "@mui/material";
 
 // Components
-import { ResponsiveHeatMap } from "@nivo/heatmap";
+import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
 
 interface CustomizedHeatMapProps {
   data: {
@@ -57,7 +57,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         <h2>{title}</h2>
         <h3>{subtitle}</h3>
       </header>
-      <ResponsiveHeatMap
+      <ResponsiveHeatMapCanvas
         data={data}
         margin={{ top: 60, right: 70, bottom: 250, left: 70 }}
         axisTop={{

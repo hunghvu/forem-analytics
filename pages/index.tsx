@@ -48,9 +48,9 @@ const Home: NextPage = (props: any) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to/", "5", "1000");
-  return { props: { articleList } };
+  return { props: { articleList }, revalidate: 60 };
 }
 
 export default Home;

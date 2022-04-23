@@ -13,7 +13,7 @@ import { FC } from "react";
 import { Paper } from "@mui/material";
 
 // Components
-import { ResponsiveLine } from "@nivo/line";
+import { ResponsiveLineCanvas } from "@nivo/line";
 
 interface CustomizedLineChartProps {
   data: {
@@ -56,7 +56,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         <h2>{title}</h2>
         <h3>{subtitle}</h3>
       </header>
-      <ResponsiveLine
+      <ResponsiveLineCanvas
         data={data}
         margin={{ top: 30, right: 30, bottom: 200, left: 80 }}
         axisBottom={{
@@ -73,8 +73,6 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         pointColor={{ theme: "background" }}
         pointBorderWidth={2}
         pointBorderColor={{ from: "serieColor" }}
-        pointLabelYOffset={-12}
-        useMesh={true}
         legends={[
           {
             anchor: "top",
