@@ -11,6 +11,8 @@ import Image from "next/image";
 
 // MUI library
 import { Alert, AlertTitle, Box, Button, Grid, Paper } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import SearchIcon from "@mui/icons-material/Search";
 
 // Utilities
 import { useForm } from "react-hook-form";
@@ -130,6 +132,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
     communityUrl: "https://dev.to/",
     iconUrl: "/dev.svg",
   });
+  const [loading, setLoading] = useState(false);
   const {
     handleSubmit,
     control,
@@ -163,6 +166,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
         spacing={4}
         component="form"
         onSubmit={handleSubmit(async (data) => {
+          setLoading(true);
           setChosenCommunity(data.community!);
           const articleList = await fetchPublishedArticlesSortedByPublishDate(
             data.community!.communityUrl!,
@@ -170,6 +174,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
             data!.articlesPerPage!
           );
           setArticleList(articleList);
+          setLoading(false);
         })}
         noValidate
       >
@@ -233,14 +238,15 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
                 articlesPerPage: "",
               });
             }}
+            disabled={loading}
           >
             Reset
           </Button>
         </Grid>
         <Grid item xs={6} style={flexRowCenter}>
-          <Button variant="outlined" type="submit">
-            Fetch articles
-          </Button>
+          <LoadingButton variant="outlined" type="submit" loading={loading} loadingPosition="start" startIcon={<SearchIcon />}>
+            Fetch Articles
+          </LoadingButton>
         </Grid>
       </Grid>
     </Paper>

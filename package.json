@@ -15,6 +15,7 @@
     "@mui/lab": "^5.0.0-alpha.77",
     "@mui/material": "^5.6.2",
     "@mui/x-data-grid": "^5.9.0",
+    "@mui/x-date-pickers": "^5.0.0-alpha.1",
     "@nivo/core": "^0.79.0",
     "@nivo/heatmap": "^0.79.1",
     "@nivo/legends": "^0.79.1",

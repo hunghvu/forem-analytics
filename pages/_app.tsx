@@ -14,7 +14,12 @@ const themeOptions: ThemeOptions = responsiveFontSizes(
       MuiButton: {
         styleOverrides: {
           root: {
-            minWidth: 140,
+            minWidth: 155,
+            textTransform: "none",
+            fontFamily: "Segoe UI Semibold",
+            fontSize: 16,
+            fontWeight: 500,
+            lineHeight: "24px",
           },
         },
       },
@@ -22,9 +27,6 @@ const themeOptions: ThemeOptions = responsiveFontSizes(
     palette: {
       primary: {
         main: "#3b49df",
-      },
-      secondary: {
-        main: "#f50057",
       },
       background: {
         default: "#f5f5f5",
