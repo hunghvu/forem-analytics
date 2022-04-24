@@ -16,7 +16,7 @@ import { sortBy } from "lodash";
 import { AnalysisResult } from "../DataVisualizationSection";
 
 // Components
-import CustomizedHeatMap from "../visualization/CustomizedHeatMap";
+import CustomizedHeatMap from "../../visualization/CustomizedHeatMap";
 
 interface ByPublishedTimeSectionProps {
   commentsByPublishedTimeWithoutOutliers: AnalysisResult[] | undefined;

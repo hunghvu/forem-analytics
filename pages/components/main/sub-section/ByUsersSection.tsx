@@ -17,10 +17,10 @@ import { GridColDef } from "@mui/x-data-grid";
 
 // Utilities
 import { AnalysisResult } from "../DataVisualizationSection";
-import type { CustomizedDataGridProps } from "../visualization/CustomizedDataGrid";
+import type { CustomizedDataGridProps } from "../../visualization/CustomizedDataGrid";
 
 // Components
-import CustomizedDataGrid from "../visualization/CustomizedDataGrid";
+import CustomizedDataGrid from "../../visualization/CustomizedDataGrid";
 
 interface ByUsersSectionProps {
   commentsByUsersWithoutOutliers: AnalysisResult[] | undefined;

@@ -15,7 +15,7 @@ import { Grid } from "@mui/material";
 import { AnalysisResult } from "../DataVisualizationSection";
 
 // Components
-import CustomizedLineChart from "../visualization/CustomizedLineChart";
+import CustomizedLineChart from "../../visualization/CustomizedLineChart";
 
 interface ByReadingTimeSectionProps {
   commentsByReadingTimeWithoutOutliers: AnalysisResult[] | undefined;

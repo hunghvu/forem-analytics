@@ -13,15 +13,15 @@ import { Grid, Button, Paper } from "@mui/material";
 import { format, parseISO } from "date-fns";
 import { countBy, groupBy, meanBy, sumBy } from "lodash";
 import type { Dictionary } from "lodash";
-import removeOutLiers from "../../utils/RemoveOutliers";
+import removeOutLiers from "../../../utils/RemoveOutliers";
 import { useForm } from "react-hook-form";
 
 // Components
 import ByTagsSection from "./sub-section/ByTagsSection";
 import ByPublishedTimeSection from "./sub-section/ByPublishedTimeSection";
 import ByReadingTimeSection from "./sub-section/ByReadingTimeSection";
-import RadioButtonField from "./inputs/RadioButtonField";
-import TextInputField from "./inputs/TextInputField";
+import RadioButtonField from "../inputs/RadioButtonField";
+import TextInputField from "../inputs/TextInputField";
 import ByUsersSection from "./sub-section/ByUsersSection";
 
 interface DataVisualizationSectionProps {

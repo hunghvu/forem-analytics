@@ -18,9 +18,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useForm } from "react-hook-form";
 
 // Components
-import AutocompleteField from "./inputs/AutocompleteField";
-import TextInputField from "./inputs/TextInputField";
-import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles";
+import AutocompleteField from "../inputs/AutocompleteField";
+import TextInputField from "../inputs/TextInputField";
+import fetchPublishedArticlesSortedByPublishDate from "../../../utils/FetchArticles";
 
 interface QueryOptionsSectionProps {
   setArticleList: Dispatch<SetStateAction<any>>;

@@ -13,18 +13,17 @@ import type { NextPage } from "next";
 
 // MUI library
 import { Box } from "@mui/material";
-import { useTheme } from "@mui/material";
 
 // Utilities
 import fetchPublishedArticlesSortedByPublishDate from "../utils/FetchArticles";
 
 // Components
-import DataVisualizationSection from "./components/DataVisualizationSection";
-import QueryOptionsSection from "./components/QueryOptionsSection";
+import DataVisualizationSection from "./components/main/DataVisualizationSection";
+import QueryOptionsSection from "./components/main/QueryOptionsSection";
+import FooterSection from "./components/footer/FooterSection";
 
 const Home: NextPage = (props: any) => {
   const [articleList, setArticleList] = useState<any[]>([]);
-  const theme = useTheme();
   useEffect(() => {
     setArticleList(props.articleList);
   }, []);
@@ -45,18 +44,14 @@ const Home: NextPage = (props: any) => {
       >
         <Box component="header" style={{ marginTop: 60, marginBottom: 70 }}>
           <h1>
-            Stats for "
-            <a href="https://www.forem.com/" style={{ color: theme.palette.primary.main }}>
-              Forem-based communities
-            </a>
-            "
+            Stats for "<a href="https://www.forem.com/">Forem-based communities</a>"
           </h1>
         </Box>
         {/* Wrap the components below in a box break layout's responsiveness, not certain why */}
         <QueryOptionsSection setArticleList={setArticleList} />
         <DataVisualizationSection articleList={articleList} />
       </Box>
-      <Box component="footer"></Box>
+      <FooterSection />
     </>
   );
 };
