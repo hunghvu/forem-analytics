@@ -27,9 +27,10 @@ interface CustomizedLineChartProps {
   axisBottomLegend: string;
   title: string;
   subtitle?: string;
+  lineColor: "set1" | "set3";
 }
 
-const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegend, axisBottomLegend, title, subtitle }) => {
+const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegend, axisBottomLegend, title, subtitle, lineColor }) => {
   return (
     <Paper
       elevation={2}
@@ -68,7 +69,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         }}
         pointSize={10}
         colors={{
-          scheme: "category10",
+          scheme: lineColor,
         }}
         legends={[
           {

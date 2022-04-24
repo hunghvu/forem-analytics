@@ -84,24 +84,26 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
   return (
     <Grid container component="section" spacing={5}>
       <Grid item xs={12} lg={6}>
-        {lineChartDataByReadingTimeForCommentsCount ? (
-          <CustomizedLineChart
-            data={lineChartDataByReadingTimeForCommentsCount}
-            axisLeftLegend="Count"
-            axisBottomLegend="Reading time (minutes)"
-            title={`Comments count by reading time 💬`}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
-          />
-        ) : null}
-      </Grid>
-      <Grid item xs={12} lg={6}>
         {lineChartDataByReadingTimeForReactionsCount ? (
           <CustomizedLineChart
             data={lineChartDataByReadingTimeForReactionsCount}
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
-            title={`Reactions count by reading time ❤️🦄🔖`}
+            title={`Reactions summary by reading time ❤️🦄🔖`}
             subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            lineColor={"set1"}
+          />
+        ) : null}
+      </Grid>
+      <Grid item xs={12} lg={6}>
+        {lineChartDataByReadingTimeForCommentsCount ? (
+          <CustomizedLineChart
+            data={lineChartDataByReadingTimeForCommentsCount}
+            axisLeftLegend="Count"
+            axisBottomLegend="Reading time (minutes)"
+            title={`Comments summary by reading time 💬`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            lineColor={"set3"}
           />
         ) : null}
       </Grid>

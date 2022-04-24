@@ -89,27 +89,28 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
   return (
     <Grid container component="section" spacing={5}>
       <Grid item xs={12} lg={6}>
-        {heatMapDataByPublishedTimeForCommentsCount ? (
-          <CustomizedHeatMap
-            data={heatMapDataByPublishedTimeForCommentsCount}
-            axisTopLegend="Day of Week"
-            axisLeftLegend="Hour"
-            axisRightLegend="Hour"
-            title={"Comments count by published time 💬"}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
-          />
-        ) : null}
-      </Grid>
-
-      <Grid item xs={12} lg={6}>
         {heatMapDataByPublishedTimeForReactionsCount ? (
           <CustomizedHeatMap
             data={heatMapDataByPublishedTimeForReactionsCount}
             axisTopLegend="Day of Week"
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
-            title={"Reactions count by published time ❤️🦄🔖"}
+            title={"Reactions summary by published time ❤️🦄🔖"}
             subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            cellColor={"purples"}
+          />
+        ) : null}
+      </Grid>
+      <Grid item xs={12} lg={6}>
+        {heatMapDataByPublishedTimeForCommentsCount ? (
+          <CustomizedHeatMap
+            data={heatMapDataByPublishedTimeForCommentsCount}
+            axisTopLegend="Day of Week"
+            axisLeftLegend="Hour"
+            axisRightLegend="Hour"
+            title={"Comments summary by published time 💬"}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            cellColor={"blues"}
           />
         ) : null}
       </Grid>

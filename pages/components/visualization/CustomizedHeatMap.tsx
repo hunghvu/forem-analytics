@@ -28,9 +28,10 @@ interface CustomizedHeatMapProps {
   axisRightLegend: string;
   title: string;
   subtitle?: string;
+  cellColor: "purples" | "blues";
 }
 
-const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, axisLeftLegend, axisRightLegend, title, subtitle }) => {
+const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, axisLeftLegend, axisRightLegend, title, subtitle, cellColor }) => {
   return (
     <Paper
       elevation={2}
@@ -74,7 +75,7 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         }}
         colors={{
           type: "sequential",
-          scheme: "greens",
+          scheme: cellColor,
         }}
         emptyColor="#555555"
         legends={[

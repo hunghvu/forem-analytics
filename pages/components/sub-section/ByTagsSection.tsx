@@ -92,7 +92,7 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
           alignItems: "center",
         }}
       >
-        <h2>Comments and reactions count based on tags 💬❤️🦄🔖</h2>
+        <h2>Comments and reactions summary based on tags 💬❤️🦄🔖</h2>
         <p>
           Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize} | Calculation method:{" "}
           {calculationMethod}
