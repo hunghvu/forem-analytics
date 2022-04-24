@@ -34,6 +34,15 @@ interface RawDataPoint {
   publishedAtHour: string;
   publishedAtDayOfWeek: string;
   readingTimeMinutes: number;
+  user: {
+    name: string | undefined | null;
+    userName: string | undefined | null;
+    twitterUserName: string | undefined | null;
+    githubUserName: string | undefined | null;
+    websiteUrl: string | undefined | null;
+    profileImage: string | undefined | null;
+    profileImage90: string | undefined | null;
+  };
 }
 
 export interface AnalysisResult {
@@ -104,6 +113,7 @@ const prepareData = (articleList: any[]): RawDataPoint[] => {
         publishedAtHour,
         publishedAtDayOfWeek,
         readingTimeMinutes: article["reading_time_minutes"],
+        user: article["user"],
       };
       data.push(rawDataPoint);
       articlesPerPage += 1;
@@ -124,7 +134,9 @@ const analyze = (
   setCommentsByReadingTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setReactionsByReadingTimeWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
   setCommentsByTagsWithOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
-  setReactionsByTagsWithOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
+  setReactionsByTagsWithOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
+  setCommentsCountByUsersWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>,
+  setReactionsCountByUsersWithoutOutliers: Dispatch<SetStateAction<AnalysisResult[] | undefined>>
 ) => {
   // Remove outliers
   const commentsCountOutliersRemoved: RawDataPoint[] = removeOutLiers(data, "commentsCount", zScore) as RawDataPoint[];
@@ -178,23 +190,43 @@ const analyze = (
       reactionsCountBasedOnTags.push({ tag, positiveReactionsCount: adjustedDataPoint.positiveReactionsCount });
     });
   });
-  const CommentsCountByTagsWithoutOutliers = calculationByCriteria(
+  const commentsCountByTagsWithoutOutliers = calculationByCriteria(
     calculationMethod,
     minSampleSize,
     commentsCountBasedOnTags,
     "commentsCount",
     (item: { tag: string; commentsCount: number }) => item.tag
   );
-  setCommentsByTagsWithOutliers(CommentsCountByTagsWithoutOutliers);
+  setCommentsByTagsWithOutliers(commentsCountByTagsWithoutOutliers);
 
-  const ReactionsCountByTagsWithoutOutliers = calculationByCriteria(
+  const reactionsCountByTagsWithoutOutliers = calculationByCriteria(
     calculationMethod,
     minSampleSize,
     reactionsCountBasedOnTags,
     "positiveReactionsCount",
     (item: { tag: string; reactionsCount: number }) => item.tag
   );
-  setReactionsByTagsWithOutliers(ReactionsCountByTagsWithoutOutliers);
+  setReactionsByTagsWithOutliers(reactionsCountByTagsWithoutOutliers);
+
+  const commentsCountByUsersWithoutOutliers = calculationByCriteria(
+    calculationMethod,
+    minSampleSize,
+    commentsCountOutliersRemoved,
+    "commentsCount",
+    (item: { user: any; commentsCount: number }) =>
+      `${item.user["name"]}, ${item.user["username"]}, ${item.user["twitter_username"]}, ${item.user["github_username"]}, ${item.user["website_url"]}, ${item.user["profile_image"]},  ${item.user["profile_image_90"]}`
+  );
+  setCommentsCountByUsersWithoutOutliers(commentsCountByUsersWithoutOutliers);
+
+  const reactionsCountByUsersWithoutOutliers = calculationByCriteria(
+    calculationMethod,
+    minSampleSize,
+    reactionsCountOutliersRemoved,
+    "positiveReactionsCount",
+    (item: { user: any; reactionsCount: number }) =>
+      `${item.user["name"]}, ${item.user["username"]}, ${item.user["twitter_username"]}, ${item.user["github_username"]}, ${item.user["website_url"]}, ${item.user["profile_image"]},  ${item.user["profile_image_90"]}`
+  );
+  setReactionsCountByUsersWithoutOutliers(reactionsCountByUsersWithoutOutliers);
 };
 
 const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleList }) => {
@@ -228,6 +260,10 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
   const [commentsByTagsWithoutOutliers, setCommentsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
   const [reactionsByTagsWithoutOutliers, setReactionsByTagsWithoutOutliers] = useState<AnalysisResult[]>();
 
+  // By users
+  const [commentsByUsersWithoutOutliers, setCommentsByUsersWithoutOutliers] = useState<AnalysisResult[]>();
+  const [reactionsByUsersWithoutOutliers, setReactionsByUsersWithoutOutliers] = useState<AnalysisResult[]>();
+
   // Analyze new article list upon changes
   useEffect(() => {
     if (articleList && articleList.length > 0) {
@@ -243,7 +279,9 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         setCommentsByReadingTimeWithoutOutliers,
         setReactionsByReadingTimeWithoutOutliers,
         setCommentsByTagsWithoutOutliers,
-        setReactionsByTagsWithoutOutliers
+        setReactionsByTagsWithoutOutliers,
+        setCommentsByUsersWithoutOutliers,
+        setReactionsByUsersWithoutOutliers
       );
     }
   }, [articleList, calculationMethod, zScore, minSampleSizePerGroup]);
