@@ -39,7 +39,9 @@ const Home: NextPage = (props: any) => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          margin: 20,
         }}
+        gap={4}
       >
         <Box component="header" style={{ marginTop: 60, marginBottom: 70 }}>
           <h1>

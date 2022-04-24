@@ -10,7 +10,7 @@ import type { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 
 // MUI library
-import { Button, Grid, Paper } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Grid, Paper } from "@mui/material";
 
 // Utilities
 import { useForm } from "react-hook-form";
@@ -153,8 +153,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
       elevation={2}
       style={{
         padding: 20,
-        margin: 20,
-        minWidth: "90vw",
+        width: "100%",
       }}
       component="section"
     >
@@ -185,6 +184,15 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
               <span style={{ marginLeft: 6 }}>stats!</span>
             </h2>
           </header>
+        </Grid>
+        <Grid item xs={12}>
+          <Alert severity="info">
+            <AlertTitle>Info</AlertTitle>
+            <Box component="ul">
+              <Box component="li">Samples are from most recent articles, for example, 5000 latest articles.</Box>
+              <Box component="li">Sample size = (# pages per query) x (# articles per page)</Box>
+            </Box>
+          </Alert>
         </Grid>
         <Grid item xs={12} md={4}>
           <AutocompleteField

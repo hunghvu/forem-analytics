@@ -119,8 +119,7 @@ const ByUsersSection: FC<ByUsersSectionProps> = ({
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        margin: 20,
-        minWidth: "97vw",
+        width: "100%",
       }}
       component="section"
     >

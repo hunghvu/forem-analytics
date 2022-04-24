@@ -39,7 +39,6 @@ const CustomizedHeatMap: FC<CustomizedHeatMapProps> = ({ data, axisTopLegend, ax
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        margin: 20,
         height: 700,
       }}
       component="section"

@@ -87,7 +87,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
   }, [commentsByPublishedTimeWithoutOutliers, reactionsByPublishedTimeWithoutOutliers]);
 
   return (
-    <Grid container component="section">
+    <Grid container component="section" spacing={5}>
       <Grid item xs={12} lg={6}>
         {heatMapDataByPublishedTimeForCommentsCount ? (
           <CustomizedHeatMap

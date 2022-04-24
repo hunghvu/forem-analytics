@@ -38,7 +38,6 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        margin: 20,
         height: 500,
       }}
       component="section"

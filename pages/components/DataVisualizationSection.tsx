@@ -298,8 +298,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         elevation={2}
         style={{
           padding: 20,
-          margin: 20,
-          minWidth: "90vw",
+          width: "100%",
         }}
         component="section"
       >
