@@ -34,15 +34,15 @@ const generateDataGridFromTags = (
 ) => {
   const rows: any[] = [];
   const columns: GridColDef[] = [
-    { field: "col1", headerName: "Tag name", width: 300, flex: 1 },
-    { field: "col2", headerName, width: 300, flex: 1 },
+    { field: "tag", headerName: "Tag name", minWidth: 200, flex: 1 },
+    { field: "metric", headerName, maxWidth: 150, flex: 1 },
   ];
   let id = 1;
   dataByTagsWithoutOutliers.forEach((adjustedDataPoint) => {
     rows.push({
       id,
-      col1: adjustedDataPoint.group,
-      col2: adjustedDataPoint.metric,
+      tag: adjustedDataPoint.group,
+      metric: adjustedDataPoint.metric,
     });
     id += 1;
   });
@@ -66,8 +66,8 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
   // Generate new tables upon changes
   useEffect(() => {
     if (commentsByTagsWithoutOutliers && reactionsByTagsWithoutOutliers) {
-      generateDataGridFromTags(commentsByTagsWithoutOutliers, `Comments count`, setDataByTagsForCommentsCount);
-      generateDataGridFromTags(reactionsByTagsWithoutOutliers, `Reactions count`, setDataByTagsForReactionstsCount);
+      generateDataGridFromTags(commentsByTagsWithoutOutliers, `# comments`, setDataByTagsForCommentsCount);
+      generateDataGridFromTags(reactionsByTagsWithoutOutliers, `# reactions`, setDataByTagsForReactionstsCount);
     }
   }, [commentsByTagsWithoutOutliers, reactionsByTagsWithoutOutliers]);
 

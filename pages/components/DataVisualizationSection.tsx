@@ -22,6 +22,7 @@ import ByReadingTimeSection from "./sub-section/ByReadingTimeSection";
 import { useForm } from "react-hook-form";
 import RadioButtonField from "./inputs/RadioButtonField";
 import TextInputField from "./inputs/TextInputField";
+import ByUsersSection from "./sub-section/ByUsersSection";
 
 interface DataVisualizationSectionProps {
   articleList: any;
@@ -35,13 +36,13 @@ interface RawDataPoint {
   publishedAtDayOfWeek: string;
   readingTimeMinutes: number;
   user: {
-    name: string | undefined | null;
+    name: string | undefined | null; // Not used for now
     userName: string | undefined | null;
-    twitterUserName: string | undefined | null;
-    githubUserName: string | undefined | null;
+    twitterUsername: string | undefined | null;
+    githubUsername: string | undefined | null;
     websiteUrl: string | undefined | null;
-    profileImage: string | undefined | null;
-    profileImage90: string | undefined | null;
+    profileImage: string | undefined | null; // Not used for now
+    profileImage90: string | undefined | null; // Not used for now
   };
 }
 
@@ -328,7 +329,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
               rules={{ required: true }}
               choices={[
                 { choiceValue: "by-sum", choiceLabel: "By Sum" },
-                { choiceValue: "by-mean", choiceLabel: "By mean" },
+                { choiceValue: "by-mean", choiceLabel: "By Mean" },
               ]}
             />
           </Grid>
@@ -389,6 +390,13 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
       <ByTagsSection
         commentsByTagsWithoutOutliers={commentsByTagsWithoutOutliers}
         reactionsByTagsWithoutOutliers={reactionsByTagsWithoutOutliers}
+        zScore={zScore}
+        minSampleSize={minSampleSizePerGroup}
+        totalSampleSize={totalSampleSize}
+      />
+      <ByUsersSection
+        commentsByUsersWithoutOutliers={commentsByUsersWithoutOutliers}
+        reactionsByUsersWithoutOutliers={reactionsByUsersWithoutOutliers}
         zScore={zScore}
         minSampleSize={minSampleSizePerGroup}
         totalSampleSize={totalSampleSize}
