@@ -14,12 +14,12 @@ import { format, parseISO } from "date-fns";
 import { countBy, groupBy, meanBy, sumBy } from "lodash";
 import type { Dictionary } from "lodash";
 import removeOutLiers from "../../utils/RemoveOutliers";
+import { useForm } from "react-hook-form";
 
 // Components
 import ByTagsSection from "./sub-section/ByTagsSection";
 import ByPublishedTimeSection from "./sub-section/ByPublishedTimeSection";
 import ByReadingTimeSection from "./sub-section/ByReadingTimeSection";
-import { useForm } from "react-hook-form";
 import RadioButtonField from "./inputs/RadioButtonField";
 import TextInputField from "./inputs/TextInputField";
 import ByUsersSection from "./sub-section/ByUsersSection";
@@ -379,6 +379,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         zScore={zScore}
         minSampleSizePerGroup={minSampleSizePerGroup}
         totalSampleSize={totalSampleSize}
+        calculationMethod={calculationMethod}
       />
       <ByReadingTimeSection
         commentsByReadingTimeWithoutOutliers={commentsByReadingTimeWithoutOutliers}
@@ -386,6 +387,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         zScore={zScore}
         minSampleSizePerGroup={minSampleSizePerGroup}
         totalSampleSize={totalSampleSize}
+        calculationMethod={calculationMethod}
       />
       <ByTagsSection
         commentsByTagsWithoutOutliers={commentsByTagsWithoutOutliers}
@@ -393,6 +395,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         zScore={zScore}
         minSampleSize={minSampleSizePerGroup}
         totalSampleSize={totalSampleSize}
+        calculationMethod={calculationMethod}
       />
       <ByUsersSection
         commentsByUsersWithoutOutliers={commentsByUsersWithoutOutliers}
@@ -400,6 +403,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
         zScore={zScore}
         minSampleSize={minSampleSizePerGroup}
         totalSampleSize={totalSampleSize}
+        calculationMethod={calculationMethod}
       />
     </>
   );

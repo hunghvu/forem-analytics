@@ -25,6 +25,7 @@ interface ByTagsSectionProps {
   zScore: number;
   minSampleSize: number;
   totalSampleSize: number;
+  calculationMethod: string;
 }
 
 const generateDataGridFromTags = (
@@ -59,6 +60,7 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
   zScore,
   minSampleSize,
   totalSampleSize,
+  calculationMethod,
 }) => {
   const [dataByTagsForCommentsCount, setDataByTagsForCommentsCount] = useState<CustomizedDataGridProps>();
   const [dataByTagsForReactionsCount, setDataByTagsForReactionstsCount] = useState<CustomizedDataGridProps>();
@@ -93,7 +95,8 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
       >
         <h2>Comments and reactions count based on tags 💬❤️🦄🔖</h2>
         <p>
-          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize}
+          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize} | Calculation method:{" "}
+          {calculationMethod}
         </p>
       </header>
       <Grid

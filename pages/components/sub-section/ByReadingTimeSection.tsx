@@ -23,6 +23,7 @@ interface ByReadingTimeSectionProps {
   zScore: number;
   minSampleSizePerGroup: number;
   totalSampleSize: number;
+  calculationMethod: string;
 }
 
 interface NivoLineChartDataPoint {
@@ -68,6 +69,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
   zScore,
   minSampleSizePerGroup,
   totalSampleSize,
+  calculationMethod,
 }) => {
   const [lineChartDataByReadingTimeForCommentsCount, setLineChartDataByReadingTimeForCommentsCount] = useState<NivoLineChartDataPoint[]>();
   const [lineChartDataByReadingTimeForReactionsCount, setLineChartDataByReadingTimeForReactionsCount] = useState<NivoLineChartDataPoint[]>();
@@ -88,7 +90,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
             title={`Comments count by reading time 💬`}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
           />
         ) : null}
       </Grid>
@@ -99,7 +101,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
             title={`Reactions count by reading time ❤️🦄🔖`}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
           />
         ) : null}
       </Grid>

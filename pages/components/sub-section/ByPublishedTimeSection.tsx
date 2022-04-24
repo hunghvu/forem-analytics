@@ -24,6 +24,7 @@ interface ByPublishedTimeSectionProps {
   zScore: number;
   minSampleSizePerGroup: number;
   totalSampleSize: number;
+  calculationMethod: string;
 }
 
 interface NivoheatMapDataByPublishedTimePoint {
@@ -70,6 +71,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
   zScore,
   minSampleSizePerGroup,
   totalSampleSize,
+  calculationMethod,
 }) => {
   const [heatMapDataByPublishedTimeForCommentsCount, setheatMapDataByPublishedTimeForCommentsCount] =
     useState<NivoheatMapDataByPublishedTimePoint[]>();
@@ -94,7 +96,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
             title={"Comments count by published time 💬"}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
           />
         ) : null}
       </Grid>
@@ -107,7 +109,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
             title={"Reactions count by published time ❤️🦄🔖"}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
           />
         ) : null}
       </Grid>

@@ -10,7 +10,7 @@ import type { Dispatch, FC, SetStateAction } from "react";
 import Image from "next/image";
 
 // MUI library
-import { Box, Button, Grid, Paper } from "@mui/material";
+import { Button, Grid, Paper } from "@mui/material";
 
 // Utilities
 import { useForm } from "react-hook-form";
@@ -212,8 +212,7 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
             control={control}
             label={"# articles per page (30 - 99)"}
             errors={errors}
-            // If the data set is too small, heat map disappears?
-            rules={{ required: true, pattern: /^[3-9]{1}[0-9]{1}$/ }} // range is 100 - 1000
+            rules={{ required: true, pattern: /^[3-9]{1}[0-9]{1}$/ }} // range is 30-99
           />
         </Grid>
         <Grid item xs={6} style={flexRowCenter}>

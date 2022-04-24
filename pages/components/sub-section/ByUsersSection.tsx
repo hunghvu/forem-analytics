@@ -28,6 +28,7 @@ interface ByUsersSectionProps {
   zScore: number;
   minSampleSize: number;
   totalSampleSize: number;
+  calculationMethod: string;
 }
 
 const generateDataGridFromUsers = (
@@ -98,6 +99,7 @@ const ByUsersSection: FC<ByUsersSectionProps> = ({
   zScore,
   minSampleSize,
   totalSampleSize,
+  calculationMethod,
 }) => {
   const [dataByUsersForCommentsCount, setDataByUsersForCommentsCount] = useState<CustomizedDataGridProps>();
   const [dataByUsersForReactionsCount, setDataByUsersForReactionstsCount] = useState<CustomizedDataGridProps>();
@@ -132,7 +134,8 @@ const ByUsersSection: FC<ByUsersSectionProps> = ({
       >
         <h2>Users ranking based on comments and reactions gained 💬❤️🦄🔖</h2>
         <p>
-          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per user = {minSampleSize}
+          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per user = {minSampleSize} | Calculation method:{" "}
+          {calculationMethod}
         </p>
       </header>
       <Grid
