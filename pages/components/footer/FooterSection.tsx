@@ -22,7 +22,7 @@ const FooterSection: FC = () => {
               fontWeight: 500,
             }}
           >
-            <a href={"https://foremstats.hungvu.tech/"}>Forem Analytics</a>
+            <a href={"https://foremanalytics.hungvu.tech/"}>Forem Analytics</a>
           </span>{" "}
           - A simple analysis to catch the trend on <a href={"https://www.forem.com/"}>Forem-based social platforms</a>. Data is fetched from
           <a href={"https://developers.forem.com/api"}> public Forem API.</a>

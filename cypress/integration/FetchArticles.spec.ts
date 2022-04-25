@@ -2,7 +2,7 @@
 
 /**
  * @author Hung Vu
- * 
+ *
  * Test article fetching capabilities.
  */
 import fetchPublishedArticlesSortedByPublishDate from "../../utils/FetchArticles";

@@ -18,6 +18,10 @@ const fetchPublishedArticlesSortedByPublishDate = async (url: string, numberOfPa
         // For some reasons, if articles per page is too high, it can results in 502.
         `${url}api/articles/latest?page=${i}&per_page=${articlesPerPage}`
       );
+      if (response.status !== 200) {
+        // TODO: Retry if failed? E.g. Code 429
+        throw new Error();
+      }
       const pageContent = await response.json();
       articles.push(pageContent);
     }
