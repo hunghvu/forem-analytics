@@ -8,7 +8,6 @@
 import { useEffect, useState } from "react";
 
 // Next
-import Head from "next/head";
 import type { NextPage } from "next";
 
 // MUI library
@@ -29,8 +28,6 @@ const Home: NextPage = (props: any) => {
   }, []);
   return (
     <>
-      {/* <Head></Head> */}
-
       <Box
         component="main"
         style={{
@@ -44,7 +41,7 @@ const Home: NextPage = (props: any) => {
       >
         <Box component="header" style={{ marginTop: 60, marginBottom: 70 }}>
           <h1>
-            Forem Analytics - Stats for "<a href="https://www.forem.com/">Forem-based communities</a>"
+            Forem Analytics - Stats for "<a href="https://www.forem.com/">Forem communities</a>"
           </h1>
         </Box>
         {/* Wrap the components below in a box break layout's responsiveness, not certain why */}

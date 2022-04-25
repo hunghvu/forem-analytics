@@ -7,6 +7,10 @@ import type { AppProps } from "next/app";
 // MUI library
 import { createTheme, CssBaseline, responsiveFontSizes, ThemeProvider } from "@mui/material";
 import type { ThemeOptions } from "@mui/material";
+import { useEffect } from "react";
+
+// Utilities
+import TagManager from "react-gtm-module";
 
 const themeOptions: ThemeOptions = responsiveFontSizes(
   createTheme({
@@ -58,7 +62,14 @@ const themeOptions: ThemeOptions = responsiveFontSizes(
   })
 );
 
+const gtm = {
+  gtmId: process.env.PUBLIC_GTM_ID!,
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    TagManager.initialize(gtm);
+  });
   return (
     <ThemeProvider theme={themeOptions}>
       {/* https://lifesaver.codes/answer/cannot-change-the-body-background-via-theme-configuration */}
