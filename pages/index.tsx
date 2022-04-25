@@ -44,7 +44,7 @@ const Home: NextPage = (props: any) => {
       >
         <Box component="header" style={{ marginTop: 60, marginBottom: 70 }}>
           <h1>
-            Stats for "<a href="https://www.forem.com/">Forem-based communities</a>"
+            Forem Analytics - Stats for "<a href="https://www.forem.com/">Forem-based communities</a>"
           </h1>
         </Box>
         {/* Wrap the components below in a box break layout's responsiveness, not certain why */}
@@ -57,7 +57,7 @@ const Home: NextPage = (props: any) => {
 };
 
 export async function getStaticProps() {
-  const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to/", "5", "1000");
+  const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to/", "1", "30");
   return { props: { articleList }, revalidate: 60 };
 }
 

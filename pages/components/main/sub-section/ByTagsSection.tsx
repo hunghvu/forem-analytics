@@ -50,7 +50,7 @@ const generateDataGridFromTags = (
   setDataByTagsWithoutOutliers({
     rows,
     columns,
-    sortField: "col2",
+    sortField: "metric",
   });
 };
 
