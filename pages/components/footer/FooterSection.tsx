@@ -32,7 +32,7 @@ const FooterSection: FC = () => {
           to their respective owners.
         </p>
         <p>
-          Inspired by "Forem article stats" dashboard. Made with ❤️ using <a href={"https://nextjs.org/"}>Next.js</a>,{" "}
+          Inspired by &quot;Forem article stats&quot; dashboard. Made with ❤️ using <a href={"https://nextjs.org/"}>Next.js</a>,{" "}
           <a href={"https://mui.com/"}>MUI</a>, <a href={"https://nivo.rocks/"}>Nivo</a>, <a href={"https://react-hook-form.com/"}>React Hook Form</a>
           , <a href={"https://lodash.com/"}>Lodash</a>, and <a href={"https://date-fns.org/"}>date-fns</a>.
         </p>

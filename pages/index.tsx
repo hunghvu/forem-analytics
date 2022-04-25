@@ -41,7 +41,7 @@ const Home: NextPage = (props: any) => {
       >
         <Box component="header" style={{ marginTop: 60, marginBottom: 70 }}>
           <h1>
-            Forem Analytics - Stats for "<a href="https://www.forem.com/">Forem communities</a>"
+            Forem Analytics - Stats for &quot;<a href="https://www.forem.com/">Forem communities</a>&quot;
           </h1>
         </Box>
         {/* Wrap the components below in a box break layout's responsiveness, not certain why */}
