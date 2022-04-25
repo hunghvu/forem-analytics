@@ -21,14 +21,16 @@ const removeOutLiers = (dataSet: any[], chosenPropertyName: string, zScore: numb
     // 4 loops, may result lower performance, but cleaner code
     const outliersRemoved: any[] = [];
     const mean = meanBy(dataSet, (rawDataPoint) => rawDataPoint[chosenPropertyName]);
-    const standardDeviation = Math.sqrt(
+    // Due to the rounding, the SD can be affected, so comparing this to online tools
+    // can potentially yield different results.
+    const populationStandardDeviation = Math.sqrt(
       meanBy(dataSet, (rawDataPoint) => (rawDataPoint[chosenPropertyName] - mean) * (rawDataPoint[chosenPropertyName] - mean))
     );
     dataSet.forEach((rawDataPoint) => {
       if (
-        ((rawDataPoint[chosenPropertyName] - mean) / standardDeviation >= -zScore &&
-          (rawDataPoint[chosenPropertyName] - mean) / standardDeviation <= zScore) ||
-        standardDeviation === 0
+        ((rawDataPoint[chosenPropertyName] - mean) / populationStandardDeviation >= -zScore &&
+          (rawDataPoint[chosenPropertyName] - mean) / populationStandardDeviation <= zScore) ||
+        populationStandardDeviation === 0
       ) {
         outliersRemoved.push(rawDataPoint);
       }
