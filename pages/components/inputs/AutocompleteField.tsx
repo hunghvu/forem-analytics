@@ -28,7 +28,7 @@ interface AutocompleteFieldProps {
 }
 
 const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options, label, errors }) => {
-  return (
+  return control ? (
     <Controller
       name={name}
       control={control}
@@ -65,7 +65,7 @@ const AutocompleteField: FC<AutocompleteFieldProps> = ({ name, control, options,
         />
       )}
     />
-  );
+  ) : null;
 };
 
 export default AutocompleteField;

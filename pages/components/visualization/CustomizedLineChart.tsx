@@ -9,11 +9,15 @@
 // React
 import { FC } from "react";
 
+// Next
+import dynamic from "next/dynamic";
+
 // MUI library
 import { Paper } from "@mui/material";
 
 // Components
-import { ResponsiveLineCanvas } from "@nivo/line";
+const loader = import("@nivo/line").then((lib) => lib.ResponsiveLineCanvas);
+const ResponsiveLineCanvas = dynamic(loader, { ssr: false });
 
 interface CustomizedLineChartProps {
   data: {

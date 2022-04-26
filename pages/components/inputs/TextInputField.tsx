@@ -25,7 +25,7 @@ interface TextInputFieldProps {
 }
 
 const TextInputField: FC<TextInputFieldProps> = ({ name, control, label, errors, rules }) => {
-  return (
+  return control ? (
     <Controller
       name={name}
       control={control}
@@ -46,7 +46,7 @@ const TextInputField: FC<TextInputFieldProps> = ({ name, control, label, errors,
         />
       )}
     />
-  );
+  ) : null;
 };
 
 export default TextInputField;

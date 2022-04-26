@@ -9,11 +9,15 @@
 // React
 import type { FC } from "react";
 
+// Next
+import dynamic from "next/dynamic";
+
 // MUI library
 import { Paper } from "@mui/material";
 
 // Components
-import { ResponsiveHeatMapCanvas } from "@nivo/heatmap";
+const loader = import("@nivo/heatmap").then((lib) => lib.ResponsiveHeatMapCanvas);
+const ResponsiveHeatMapCanvas = dynamic(loader, { ssr: false });
 
 interface CustomizedHeatMapProps {
   data: {

@@ -18,7 +18,7 @@ export interface CustomizedDataGridProps {
 }
 
 const CustomizedDataGrid: FC<CustomizedDataGridProps> = ({ rows, columns, sortField }) => {
-  return (
+  return rows && columns ? (
     <DataGrid
       rows={rows}
       columns={columns}
@@ -28,7 +28,7 @@ const CustomizedDataGrid: FC<CustomizedDataGridProps> = ({ rows, columns, sortFi
         },
       }}
     />
-  );
+  ) : null;
 };
 
 export default CustomizedDataGrid;

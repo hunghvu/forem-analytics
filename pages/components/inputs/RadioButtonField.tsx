@@ -26,7 +26,7 @@ interface RadioButtonFieldProps {
 }
 
 const RadioButtonField: FC<RadioButtonFieldProps> = ({ name, control, label, rules, choices }) => {
-  return (
+  return control ? (
     <FormControl component="fieldset">
       <FormLabel component="legend">{label}</FormLabel>
       <Controller
@@ -42,7 +42,7 @@ const RadioButtonField: FC<RadioButtonFieldProps> = ({ name, control, label, rul
         )}
       />
     </FormControl>
-  );
+  ) : null;
 };
 
 export default RadioButtonField;
