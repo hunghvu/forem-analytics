@@ -1,7 +1,7 @@
 /**
  * @author Hung Vu
  *
- * This provides an autocomplete field for a given form.
+ * This provides a radio button group for a given form.
  */
 
 // React

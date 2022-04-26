@@ -347,7 +347,7 @@ const DataVisualizationSection: FC<DataVisualizationSectionProps> = ({ articleLi
               control={control}
               label={"Minimal sample size per group (>= 0)"}
               errors={errors}
-              rules={{ required: true, pattern: /[0-9]*/ }} // range is 0.00 - 3.00
+              rules={{ required: true, pattern: /[0-9]*/ }}
             />
           </Grid>
           <Grid item xs={6} style={flexRowCenter}>

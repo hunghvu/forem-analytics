@@ -25,7 +25,7 @@ const Home: NextPage = (props: any) => {
   const [articleList, setArticleList] = useState<any[]>([]);
   useEffect(() => {
     setArticleList(props.articleList);
-  }, []);
+  }, [props.articleList]);
   return (
     <>
       <Box
@@ -53,9 +53,9 @@ const Home: NextPage = (props: any) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const articleList = await fetchPublishedArticlesSortedByPublishDate("https://dev.to/", "1", "30");
-  return { props: { articleList }, revalidate: 60 };
+  return { props: { articleList } };
 }
 
 export default Home;
