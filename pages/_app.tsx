@@ -63,13 +63,16 @@ const themeOptions: ThemeOptions = responsiveFontSizes(
 );
 
 const gtm = {
-  gtmId: process.env.PUBLIC_GTM_ID!,
+  gtmId: process.env.NEXT_PUBLIC_GTM_ID!,
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+  // Google Tag Manager initialization
   useEffect(() => {
     TagManager.initialize(gtm);
-  });
+  }, []);
+
   return (
     <ThemeProvider theme={themeOptions}>
       {/* https://lifesaver.codes/answer/cannot-change-the-body-background-via-theme-configuration */}
