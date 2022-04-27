@@ -38,10 +38,10 @@ const themeOptions: ThemeOptions = responsiveFontSizes(
     },
     typography: {
       fontFamily: [
-        "-apple-system",
-        "BlinkMacSystemFont",
         "Segoe UI",
         "Segoe UI Semibold",
+        "-apple-system",
+        "BlinkMacSystemFont",
         "Roboto",
         "Helvetica",
         " Arial",
@@ -67,7 +67,6 @@ const gtm = {
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
-
   // Google Tag Manager initialization
   useEffect(() => {
     TagManager.initialize(gtm);
