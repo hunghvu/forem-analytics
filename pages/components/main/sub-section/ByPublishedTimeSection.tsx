@@ -96,7 +96,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
             title={"Reactions summary by published time ❤️🦄🔖"}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod} | In local time zone`}
             cellColor={"purples"}
           />
         ) : null}
@@ -109,7 +109,7 @@ const ByPublishedTimeSection: FC<ByPublishedTimeSectionProps> = ({
             axisLeftLegend="Hour"
             axisRightLegend="Hour"
             title={"Comments summary by published time 💬"}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per time slot = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod} | In local time zone`}
             cellColor={"blues"}
           />
         ) : null}
