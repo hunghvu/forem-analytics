@@ -43,7 +43,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         flexDirection: "column",
         alignContent: "center",
         alignItems: "center",
-        height: 500,
+        height: 550,
       }}
       component="section"
     >
@@ -60,7 +60,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
       </header>
       <ResponsiveLineCanvas
         data={data}
-        margin={{ top: 30, right: 40, bottom: 120, left: 60 }}
+        margin={{ top: 30, right: 40, bottom: 140, left: 60 }}
         axisBottom={{
           legend: axisBottomLegend,
           legendOffset: 35,
