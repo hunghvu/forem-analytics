@@ -90,7 +90,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
             title={`Reactions summary by reading time ❤️🦄🔖`}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Minimal number of published articles per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
             lineColor={"set1"}
           />
         ) : null}
@@ -102,7 +102,7 @@ const ByReadingTimeSection: FC<ByReadingTimeSectionProps> = ({
             axisLeftLegend="Count"
             axisBottomLegend="Reading time (minutes)"
             title={`Comments summary by reading time 💬`}
-            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Min sample size per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
+            subtitle={`Sample size = ${totalSampleSize} | Z-score = ${zScore} | Minimal number of published articles per reading time = ${minSampleSizePerGroup} | Calculation method: ${calculationMethod}`}
             lineColor={"set3"}
           />
         ) : null}

@@ -92,10 +92,10 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
           alignItems: "center",
         }}
       >
-        <h2>Comments and reactions summary based on tags 💬❤️🦄🔖</h2>
-        <p>
-          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per tag = {minSampleSize} | Calculation method:{" "}
-          {calculationMethod}
+        <h2>Reactions and comments summary based on tags ❤️🦄🔖💬</h2>
+        <p style={{ padding: 12 }}>
+          Total sample size = {totalSampleSize} | Z-score = {zScore} | Minimal number of published articles per tag = {minSampleSize} | Calculation
+          method: {calculationMethod}
         </p>
       </header>
       <Grid
@@ -107,11 +107,10 @@ const ByTagsSection: FC<ByTagsSectionProps> = ({
         }}
       >
         <Grid item xs={12} md={6}>
-          {dataByTagsForCommentsCount ? <CustomizedDataGrid {...dataByTagsForCommentsCount} /> : null}
-        </Grid>
-
-        <Grid item xs={12} md={6}>
           {dataByTagsForReactionsCount ? <CustomizedDataGrid {...dataByTagsForReactionsCount} /> : null}
+        </Grid>
+        <Grid item xs={12} md={6}>
+          {dataByTagsForCommentsCount ? <CustomizedDataGrid {...dataByTagsForCommentsCount} /> : null}
         </Grid>
       </Grid>
     </Paper>

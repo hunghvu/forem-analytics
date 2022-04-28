@@ -56,7 +56,7 @@ const CustomizedLineChart: FC<CustomizedLineChartProps> = ({ data, axisLeftLegen
         }}
       >
         <h2>{title}</h2>
-        <p>{subtitle}</p>
+        <p style={{ padding: 12 }}>{subtitle}</p>
       </header>
       <ResponsiveLineCanvas
         data={data}

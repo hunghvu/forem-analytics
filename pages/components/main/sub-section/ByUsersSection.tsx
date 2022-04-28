@@ -131,10 +131,10 @@ const ByUsersSection: FC<ByUsersSectionProps> = ({
           alignItems: "center",
         }}
       >
-        <h2>Users ranking based on comments and reactions gained 💬❤️🦄🔖</h2>
-        <p>
-          Total sample size = {totalSampleSize} | Z-score = {zScore} | Min sample size per user = {minSampleSize} | Calculation method:{" "}
-          {calculationMethod}
+        <h2>Users ranking based on reactions and comments gained ❤️🦄🔖💬</h2>
+        <p style={{ padding: 12 }}>
+          Total sample size = {totalSampleSize} | Z-score = {zScore} | Minimal number of published articles per user = {minSampleSize} | Calculation
+          method: {calculationMethod}
         </p>
       </header>
       <Grid
@@ -146,11 +146,10 @@ const ByUsersSection: FC<ByUsersSectionProps> = ({
         }}
       >
         <Grid item xs={12} md={6}>
-          {dataByUsersForCommentsCount ? <CustomizedDataGrid {...dataByUsersForCommentsCount} /> : null}
-        </Grid>
-
-        <Grid item xs={12} md={6}>
           {dataByUsersForReactionsCount ? <CustomizedDataGrid {...dataByUsersForReactionsCount} /> : null}
+        </Grid>
+        <Grid item xs={12} md={6}>
+          {dataByUsersForCommentsCount ? <CustomizedDataGrid {...dataByUsersForCommentsCount} /> : null}
         </Grid>
       </Grid>
     </Paper>
