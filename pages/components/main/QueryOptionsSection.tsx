@@ -194,8 +194,13 @@ const QueryOptionsSection: FC<QueryOptionsSectionProps> = ({ setArticleList }) =
           <Alert severity="info">
             <AlertTitle>Info</AlertTitle>
             <Box component="ul">
-              <Box component="li">Samples are from most recent articles, for example, 5000 latest articles.</Box>
-              <Box component="li">Sample size = (# pages per query) x (# articles per page)</Box>
+              <Box component="li">The samples are most recent articles, for example, 5000 latest articles.</Box>
+              <Box component="li">Articles fetching may take a long time if sample size is huge.</Box>
+              <Box component="li">
+                5000 articles (in JSON) are about 9 MB of data and may take more than 40 seconds to fetch depending on network connection and
+                overhead.
+              </Box>
+              <Box component="li">Sample size (total # articles) = (# pages per query) x (# articles per page)</Box>
             </Box>
           </Alert>
         </Grid>
