@@ -55,8 +55,8 @@ const availableCommunities: Community[] = [
     iconUrl: "/forem.webp",
   },
   {
-    label: "Web Monetization",
-    communityUrl: "https://community.webmonetization.org/",
+    label: "The Interledger Community",
+    communityUrl: "https://community.interledger.org/",
     iconUrl: "/web-monetization.webp",
   },
   {
@@ -88,11 +88,6 @@ const availableCommunities: Community[] = [
     label: "This MMA Life",
     communityUrl: "https://www.thismmalife.com/",
     iconUrl: "/this-mma-life.png",
-  },
-  {
-    label: "VSCodeTips",
-    communityUrl: "https://community.vscodetips.com/",
-    iconUrl: "/vscodetips.svg",
   },
   {
     label: "FlowState",
